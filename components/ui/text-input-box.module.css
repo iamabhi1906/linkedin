@@ -1,0 +1,9 @@
+.inputBox {
+  margin: 0;
+  height: 48px;
+}
+
+.errorMessage {
+  margin-top: 0px !important;
+  font-weight: 500 !important;
+}

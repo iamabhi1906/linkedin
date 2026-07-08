@@ -1,0 +1,20 @@
+.page {
+  padding: 0px 10px;
+}
+.joinText {
+  text-align: center;
+  margin-bottom: 20px !important;
+  font-size: 30px !important;
+}
+
+.cardContent {
+  padding: 32px !important;
+}
+
+.fullRound {
+  border-radius: 100px !important;
+}
+
+.divider {
+    margin: 10px 0px !important;
+}
