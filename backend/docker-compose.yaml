@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: linkedin_postgres_db
+    restart: always
+    env_file:
+      - ./.env.production.local
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - linkedin-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: linkedin_pgadmin
+    restart: always
+    env_file:
+      - ./.env.production.local
+      
+    ports:
+      - "8888:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - linkedin-network
+
+  backend:
+    build:
+      context: .
+    container_name: linkedin-backend
+    env_file:
+      - ./.env.production.local
+
+    depends_on:
+      - postgres
+
+    ports:
+      - "5050:3000"
+
+    restart: always
+
+    volumes:
+      - ./public:/app/public
+
+    networks:
+      - linkedin-network
+
+volumes:
+  postgres_data:
+    external: true
+    name: linkedin_postgres_data
+
+  pgadmin_data:
+    external: true
+    name: linkedin_pgadmin_data
+
+networks:
+  linkedin-network:
+    external: true
+

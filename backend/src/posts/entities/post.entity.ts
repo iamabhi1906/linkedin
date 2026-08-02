@@ -1,0 +1,73 @@
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { User } from '../../users/entities/user.entity';
+import { Organization } from '../../organizations/entities/organization.entity';
+import { PostVisibility } from '../enums/post-visibility.enum';
+import { PostMedia } from './post-media.entity';
+import { PostLike } from './post-like.entity';
+import { PostComment } from './post-comment.entity';
+
+@Entity('posts')
+export class Post {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ type: 'uuid' })
+  authorId: string;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'author_id' })
+  author: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
+  @ManyToOne(() => Organization, { onDelete: 'CASCADE', nullable: true })
+  @JoinColumn({ name: 'organization_id' })
+  organization?: Organization;
+
+  @Column({ type: 'text' })
+  content: string;
+
+  @Column({
+    type: 'enum',
+    enum: PostVisibility,
+    default: PostVisibility.PUBLIC,
+  })
+  visibility: PostVisibility;
+
+  @Column({ type: 'int', default: 0 })
+  likesCount: number;
+
+  @Column({ type: 'int', default: 0 })
+  commentsCount: number;
+
+  @OneToMany(() => PostMedia, (media) => media.post, { cascade: true })
+  media: PostMedia[];
+
+  @OneToMany(() => PostLike, (like) => like.post)
+  likes: PostLike[];
+
+  @OneToMany(() => PostComment, (comment) => comment.post)
+  comments: PostComment[];
+
+  @Index()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
+}
