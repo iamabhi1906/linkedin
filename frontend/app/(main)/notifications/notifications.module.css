@@ -1,0 +1,139 @@
+.container {
+  padding-top: 24px !important;
+  padding-bottom: 24px !important;
+}
+
+.notificationsCard {
+  border: 1px solid #E0E0E0 !important;
+  border-radius: 8px !important;
+  background-color: #FFFFFF !important;
+  overflow: hidden !important;
+}
+
+.cardHeader {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #E0E0E0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.headerTitle {
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  color: #000000 !important;
+}
+
+.cardBody {
+  padding: 0 !important;
+}
+
+.requestItem {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #F0F0F0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+}
+
+.requestItem:last-child {
+  border-bottom: none !important;
+}
+
+.userInfoBox {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+
+.userAvatar {
+  width: 48px !important;
+  height: 48px !important;
+}
+
+.userDetails {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.userName {
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  color: #000000 !important;
+}
+
+.userHeadline {
+  font-size: 0.8rem !important;
+  color: #666666 !important;
+}
+
+.requestTime {
+  font-size: 0.75rem !important;
+  color: #888888 !important;
+  margin-top: 2px !important;
+}
+
+.actionButtons {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.acceptButton {
+  background-color: #0A66C2 !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 16px !important;
+  padding: 6px 18px !important;
+}
+
+.acceptButton:hover {
+  background-color: #004182 !important;
+}
+
+.rejectButton {
+  border-color: #666666 !important;
+  color: #666666 !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 16px !important;
+  padding: 6px 18px !important;
+}
+
+.rejectButton:hover {
+  background-color: #F3F3F3 !important;
+}
+
+.emptyStateBox {
+  padding: 48px 24px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.emptyIcon {
+  font-size: 48px !important;
+  color: #888888 !important;
+}
+
+.emptyTitle {
+  font-weight: 600 !important;
+  color: #333333 !important;
+}
+
+.emptyText {
+  color: #666666 !important;
+  font-size: 0.875rem !important;
+}
+
+.loadingBox {
+  padding: 48px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}

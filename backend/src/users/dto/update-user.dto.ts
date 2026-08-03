@@ -37,4 +37,8 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString({ message: 'Cover picture must be a string' })
   coverPicture?: string;
+
+  @IsOptional()
+  isPrivate?: boolean;
+
 }

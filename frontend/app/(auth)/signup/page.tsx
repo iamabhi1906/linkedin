@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Divider, Stack, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/store';
 import { signupThunk } from '@/features/auth/auth.action';
@@ -13,6 +13,9 @@ import { Signup, SignupSchema } from '@/features/auth/auth.types';
 import { FormInput } from '@/components/forms/form-input';
 import { useSnackbar } from 'notistack';
 import LinkedInLogo from '@/components/linkedin-logo';
+import styles from './page.module.css';
+import InputField from '@/components/input-filed';
+import TextInputBox from '@/components/ui/text-input-box';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -27,7 +30,6 @@ export default function SignUpPage() {
       lastName: '',
       email: '',
       password: '',
-      confirmPassword: '',
     },
   });
 
@@ -51,23 +53,24 @@ export default function SignUpPage() {
   };
 
   return (
-    <Box sx={{ pt: 4, pb: 8 }}>
-      <Container maxWidth="xs">
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-          <LinkedInLogo width={120} height={32} />
-          <Typography variant="h5" sx={{ fontWeight: 600, mt: 2, textAlign: 'center' }}>
-            Make the most of your professional life
+    <Box className={styles.signupPage}>
+      <Box className={styles.logoContainer}>
+        <LinkedInLogo width={175} height={68} />
+      </Box>
+      <Box className={styles.cardPage}>
+        <Box className={styles.joinTextContainer}>
+          <Typography variant="h5" className={styles.joinText}>
+            Join LinkedIn now — it&apos;s free!
           </Typography>
         </Box>
 
-        <Card elevation={0} sx={{ border: '1px solid #E0E0E0', borderRadius: 2, p: 2 }}>
-          <CardContent>
+        <Card elevation={0} className={styles.card}>
+          <CardContent className={styles.cardContent1}>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <FormInput name="firstName" control={control} label="First Name" />
-              <FormInput name="lastName" control={control} label="Last Name" />
-              <FormInput name="email" control={control} label="Email" />
-              <FormInput name="password" control={control} label="Password (6+ characters)" type="password" />
-              <FormInput name="confirmPassword" control={control} label="Confirm Password" type="password" />
+              <TextInputBox name="firstName" control={control} label="First Name" />
+              <TextInputBox name="lastName" control={control} label="Last Name" />
+              <TextInputBox name="email" control={control} label="Email" />
+              <TextInputBox name="password" control={control} label="Password (6+ characters)" type="password" />
 
               <Button
                 type="submit"
@@ -81,6 +84,8 @@ export default function SignUpPage() {
               </Button>
             </form>
           </CardContent>
+          <Divider>or</Divider>
+          <CardContent className={styles.cardContent2}></CardContent>
         </Card>
 
         <Typography variant="body2" sx={{ textAlign: 'center', mt: 3 }}>
@@ -89,7 +94,8 @@ export default function SignUpPage() {
             Sign in
           </Link>
         </Typography>
-      </Container>
+      </Box>
+      <Stack>Footer section</Stack>
     </Box>
   );
 }

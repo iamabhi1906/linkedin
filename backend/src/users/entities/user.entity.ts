@@ -74,6 +74,12 @@ export class User {
   isVerified!: boolean;
 
   @Column({
+    default: false,
+  })
+  isPrivate!: boolean;
+
+
+  @Column({
     type: 'enum',
     enum: UserStatus,
     default: UserStatus.ACTIVE,

@@ -1,14 +1,51 @@
-.page {
-  padding: 0px 10px;
+.signupPage {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
-.joinText {
-  text-align: center;
-  margin-bottom: 20px !important;
-  font-size: 30px !important;
+.cardPage {
+  max-width: 1128px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.logoContainer {
+  display: block;
+  width: 170px;
 }
 
-.cardContent {
-  padding: 32px !important;
+.joinTextContainer {
+  width: 100%;
+  padding: 24px 16px !important;
+}
+
+.joinText {
+  text-align: center;
+  font-size: 33px !important;
+  line-height: 38.4px !important;
+  font-weight: 400 !important;
+}
+.card {
+  max-width: 400px;
+  width: 100%;
+  border: 0px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent !important;
+
+  background-color: #ffffff !important;
+}
+
+.cardContent1 {
+  width: 400px;
+  padding: 24px 24px 0px !important;
+  border-radius: 8px !important;
 }
 
 .fullRound {
@@ -16,5 +53,5 @@
 }
 
 .divider {
-    margin: 10px 0px !important;
+  margin: 10px 0px !important;
 }

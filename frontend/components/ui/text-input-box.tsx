@@ -1,4 +1,4 @@
-import { Stack, TextField, Typography } from '@mui/material';
+import { Input, Stack, TextField, Typography } from '@mui/material';
 import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form';
 import styles from './text-input-box.module.css';
 
@@ -7,9 +7,10 @@ interface InputFieldProps<T extends FieldValues> {
   name: FieldPath<T>;
   label: string;
   className?: string;
+  type?: string;
 }
 
-export default function TextInputBox<T extends FieldValues>({ name, control, label }: InputFieldProps<T>) {
+export default function TextInputBox<T extends FieldValues>({ name, control, label, type }: InputFieldProps<T>) {
   return (
     <Controller
       name={name}
@@ -17,26 +18,27 @@ export default function TextInputBox<T extends FieldValues>({ name, control, lab
       render={({ field, fieldState }) => (
         <>
           <Stack spacing={0.5}>
-            <Typography gutterBottom variant="body2">
+            <Typography gutterBottom variant="body2" className={styles.label}>
               {label}
             </Typography>
-            <TextField
+            <Input
               {...field}
-              variant="outlined"
               value={field.value ?? ''}
               fullWidth
               size="small"
+              type={type || 'text'}
               error={!!fieldState.error}
               className={styles.inputBox}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'text.primary',
-                    borderWidth: 2,
+                    borderColor: 'none',
+                    borderWidth: 0,
                   },
                 },
                 '& .MuiInputBase-input': {
                   padding: '12px 14px',
+                  height: '32px',
                 },
                 m: 0,
               }}

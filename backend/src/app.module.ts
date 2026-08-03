@@ -20,6 +20,7 @@ import { PostLikesModule } from './post-likes/post-likes.module';
 import { PostCommentsModule } from './post-comments/post-comments.module';
 import { JobsModule } from './jobs/jobs.module';
 import { JobApplicationsModule } from './job-applications/job-applications.module';
+import { FollowsModule } from './follows/follows.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { JobApplicationsModule } from './job-applications/job-applications.modul
     PostCommentsModule,
     JobsModule,
     JobApplicationsModule,
+    FollowsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
