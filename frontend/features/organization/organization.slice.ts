@@ -1,28 +1,35 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { organizationService } from '@/services/organizations/organization.service';
-import { CreateOrgPayload } from './organization.type';
+import { CreateOrgPayload, Organization } from './organization.type';
+import axios from 'axios';
 
 export const fetchOrganizationsThunk = createAsyncThunk('organization/fetchAll', async (_, { rejectWithValue }) => {
   try {
     const data = await organizationService.getAll();
-    return data.organizations;
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || 'Failed to fetch organizations');
+    return data.organizations as Organization[];
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch organizations');
+    }
+    return rejectWithValue('Failed to fetch organizations');
   }
 });
 
 export const createOrganizationThunk = createAsyncThunk('organization/create', async (payload: CreateOrgPayload, { rejectWithValue }) => {
   try {
     const data = await organizationService.create(payload);
-    return data.organization;
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || 'Failed to create organization');
+    return data.organization as Organization;
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to create organization');
+    }
+    return rejectWithValue('Failed to create organization');
   }
 });
 
 interface OrganizationState {
-  organizations: any[];
-  currentOrg: any | null;
+  organizations: Organization[];
+  currentOrg: Organization | null;
   loading: boolean;
   error: string | null;
 }

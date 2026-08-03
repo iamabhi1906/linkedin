@@ -21,6 +21,7 @@ import { PostCommentsModule } from './post-comments/post-comments.module';
 import { JobsModule } from './jobs/jobs.module';
 import { JobApplicationsModule } from './job-applications/job-applications.module';
 import { FollowsModule } from './follows/follows.module';
+import { ConversationsModule } from './conversations/conversations.module';
 
 @Module({
   imports: [
@@ -45,8 +46,9 @@ import { FollowsModule } from './follows/follows.module';
     JobsModule,
     JobApplicationsModule,
     FollowsModule,
+    ConversationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

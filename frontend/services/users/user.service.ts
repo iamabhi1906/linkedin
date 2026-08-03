@@ -20,6 +20,15 @@ export const userService = {
     return response.data;
   },
 
+  async search(query?: string, page = 1, limit = 12) {
+    const params = new URLSearchParams();
+    if (query) params.append('q', query);
+    params.append('page', page.toString());
+    params.append('limit', limit.toString());
+    const response = await apiClient.get(`/users/search?${params.toString()}`);
+    return response.data;
+  },
+
   async updateProfile(payload: UpdateProfilePayload) {
     const response = await apiClient.patch('/users/me', payload);
     return response.data.user;

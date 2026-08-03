@@ -1,0 +1,83 @@
+.container {
+  padding-top: 24px !important;
+  padding-bottom: 40px !important;
+}
+
+.sidebarCard {
+  border: 1px solid #E0E0E0 !important;
+  border-radius: 8px !important;
+  background-color: #FFFFFF !important;
+  margin-bottom: 16px !important;
+  overflow: hidden !important;
+}
+
+.sidebarHeader {
+  padding: 16px !important;
+  border-bottom: 1px solid #E0E0E0 !important;
+  font-weight: 600 !important;
+  color: #1D2226 !important;
+}
+
+.sidebarItem {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 14px 16px !important;
+  cursor: pointer !important;
+  border-bottom: 1px solid #F3F3F3 !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.sidebarItem:hover {
+  background-color: #F3F6F8 !important;
+}
+
+.sidebarItemText {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  color: #666666 !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important;
+}
+
+.sidebarCount {
+  font-weight: 600 !important;
+  color: #0A66C2 !important;
+  font-size: 0.9rem !important;
+}
+
+.mainCard {
+  border: 1px solid #E0E0E0 !important;
+  border-radius: 8px !important;
+  background-color: #FFFFFF !important;
+  padding: 20px !important;
+}
+
+.searchBox {
+  display: flex !important;
+  align-items: center !important;
+  background-color: #EDF3F8 !important;
+  border-radius: 4px !important;
+  padding: 4px 12px !important;
+  margin-bottom: 24px !important;
+}
+
+.sectionHeader {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 16px !important;
+}
+
+.sectionTitle {
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  color: #1D2226 !important;
+}
+
+.paginationBox {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 32px !important;
+}

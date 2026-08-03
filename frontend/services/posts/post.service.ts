@@ -28,6 +28,11 @@ export const postService = {
     return response.data;
   },
 
+  async repost(postId: string, content?: string) {
+    const response = await apiClient.post(`/posts/${postId}/repost`, { content });
+    return response.data;
+  },
+
   async getComments(postId: string) {
     const response = await apiClient.get(`/posts/${postId}/comments`);
     return response.data;

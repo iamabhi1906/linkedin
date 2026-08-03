@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { jobService, JobSearchQuery, CreateJobPayload } from '@/services/jobs/job.service';
+import { Job } from './job.type';
+import axios from 'axios';
 
 export const searchJobsThunk = createAsyncThunk(
   'job/search',
@@ -7,8 +9,11 @@ export const searchJobsThunk = createAsyncThunk(
     try {
       const data = await jobService.search(query);
       return data;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to search jobs');
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        return rejectWithValue(err.response?.data?.message || 'Failed to search jobs');
+      }
+      return rejectWithValue('Failed to search jobs');
     }
   },
 );
@@ -18,15 +23,18 @@ export const createJobThunk = createAsyncThunk(
   async (payload: CreateJobPayload, { rejectWithValue }) => {
     try {
       const data = await jobService.create(payload);
-      return data.job;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to post job');
+      return data.job as Job;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        return rejectWithValue(err.response?.data?.message || 'Failed to post job');
+      }
+      return rejectWithValue('Failed to post job');
     }
   },
 );
 
 interface JobState {
-  jobs: any[];
+  jobs: Job[];
   total: number;
   loading: boolean;
   error: string | null;

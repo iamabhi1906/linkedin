@@ -52,6 +52,16 @@ export class Post {
   @Column({ type: 'int', default: 0 })
   commentsCount!: number;
 
+  @Column({ type: 'int', default: 0 })
+  repostsCount!: number;
+
+  @Column({ type: 'uuid', nullable: true })
+  originalPostId?: string;
+
+  @ManyToOne(() => Post, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'originalPostId' })
+  originalPost?: Post;
+
   @OneToMany(() => PostMedia, (media) => media.post, { cascade: true })
   media!: PostMedia[];
 

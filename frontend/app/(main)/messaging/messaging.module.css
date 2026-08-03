@@ -1,0 +1,201 @@
+.container {
+  padding-top: 24px !important;
+  padding-bottom: 24px !important;
+  height: calc(100vh - 100px) !important;
+}
+
+.messagingCard {
+  border: 1px solid #E0E0E0 !important;
+  border-radius: 8px !important;
+  background-color: #FFFFFF !important;
+  display: flex !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Sidebar Conversations List */
+.sidebar {
+  width: 320px !important;
+  border-right: 1px solid #E0E0E0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: #FFFFFF !important;
+}
+
+.sidebarHeader {
+  padding: 16px !important;
+  border-bottom: 1px solid #E0E0E0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.sidebarTitle {
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  color: #1D2226 !important;
+}
+
+.searchBox {
+  padding: 8px 16px !important;
+  border-bottom: 1px solid #F0F0F0 !important;
+  background-color: #F8F9FA !important;
+}
+
+.searchInput {
+  background-color: #EDF3F8 !important;
+  border-radius: 4px !important;
+  padding: 4px 10px !important;
+  font-size: 0.85rem !important;
+}
+
+.conversationList {
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+.conversationItem {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  padding: 12px 16px !important;
+  cursor: pointer !important;
+  border-bottom: 1px solid #F3F3F3 !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.conversationItem:hover {
+  background-color: #F3F6F8 !important;
+}
+
+.activeConversation {
+  background-color: #EDF3F8 !important;
+  border-left: 4px solid #0A66C2 !important;
+}
+
+.conversationDetails {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.userNameRow {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.userName {
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  color: #1D2226 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.timestamp {
+  font-size: 0.7rem !important;
+  color: #666666 !important;
+}
+
+.lastMessage {
+  font-size: 0.78rem !important;
+  color: #666666 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Chat Pane */
+.chatPane {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: #FFFFFF !important;
+}
+
+.chatHeader {
+  padding: 12px 20px !important;
+  border-bottom: 1px solid #E0E0E0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background-color: #FFFFFF !important;
+}
+
+.chatHeaderUser {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.messagesFeed {
+  flex: 1 !important;
+  padding: 20px !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  background-color: #FAFAFA !important;
+}
+
+.messageBubble {
+  max-width: 70% !important;
+  padding: 10px 14px !important;
+  border-radius: 12px !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+  word-break: break-word !important;
+}
+
+.myMessage {
+  align-self: flex-end !important;
+  background-color: #0A66C2 !important;
+  color: #FFFFFF !important;
+  border-bottom-right-radius: 2px !important;
+}
+
+.theirMessage {
+  align-self: flex-start !important;
+  background-color: #E9ECEF !important;
+  color: #1D2226 !important;
+  border-bottom-left-radius: 2px !important;
+}
+
+.messageTime {
+  font-size: 0.65rem !important;
+  margin-top: 4px !important;
+  opacity: 0.8 !important;
+  text-align: right !important;
+}
+
+.mediaAttachment {
+  max-width: 240px !important;
+  max-height: 240px !important;
+  border-radius: 8px !important;
+  margin-top: 6px !important;
+}
+
+.inputArea {
+  padding: 12px 16px !important;
+  border-top: 1px solid #E0E0E0 !important;
+  background-color: #FFFFFF !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.inputRow {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 8px !important;
+}
+
+.emptyState {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  color: #666666 !important;
+}

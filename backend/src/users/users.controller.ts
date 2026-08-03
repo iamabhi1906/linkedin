@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -13,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/infra/guards/jwt.guard';
+import { OptionalJwtAuthGuard } from 'src/infra/guards/optional-jwt.guard';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { type AuthenticatedRequest } from 'src/auth/interfaces/authenticated-request.interface';
@@ -29,6 +31,24 @@ export class UsersController {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+
+  @UseGuards(OptionalJwtAuthGuard)
+  @Get('search')
+  async search(
+    @Req() req: AuthenticatedRequest,
+    @Query('q') query?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    const currentUserId = req.user?.sub;
+    const result = await this.usersService.searchUsers(
+      query,
+      page ? Number(page) : 1,
+      limit ? Number(limit) : 12,
+      currentUserId,
+    );
+    return { status: 'success', ...result };
   }
 
   @Get('profile/:username')

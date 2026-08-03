@@ -10,7 +10,7 @@ export class GetPostService {
     private readonly postRepository: Repository<Post>,
   ) {}
 
-  async findById(id: string, userId?: string): Promise<any> {
+  async findById(id: string, userId?: string): Promise<Omit<Post, 'likes'> & { isLiked: boolean }> {
     const post = await this.postRepository.findOne({
       where: { id },
       relations: {
@@ -30,7 +30,7 @@ export class GetPostService {
     return { ...rest, isLiked };
   }
 
-  async findByAuthor(authorId: string, currentUserId?: string): Promise<any[]> {
+  async findByAuthor(authorId: string, currentUserId?: string): Promise<(Omit<Post, 'likes'> & { isLiked: boolean })[]> {
     const posts = await this.postRepository.find({
       where: { authorId },
       relations: { author: true, organization: true, media: true, likes: true },
@@ -45,7 +45,7 @@ export class GetPostService {
     });
   }
 
-  async findByOrganization(organizationId: string, currentUserId?: string): Promise<any[]> {
+  async findByOrganization(organizationId: string, currentUserId?: string): Promise<(Omit<Post, 'likes'> & { isLiked: boolean })[]> {
     const posts = await this.postRepository.find({
       where: { organizationId },
       relations: { author: true, organization: true, media: true, likes: true },

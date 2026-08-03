@@ -80,6 +80,26 @@ export const followService = {
     return response.data;
   },
 
+  async getFollowers(userId?: string, page = 1, limit = 10) {
+    const url = userId ? `/follows/users/${userId}/followers` : '/follows/followers';
+    const response = await apiClient.get(url, { params: { page, limit } });
+    return response.data as {
+      status: string;
+      followers: FollowUser[];
+      meta: { total: number; page: number; limit: number; totalPages: number };
+    };
+  },
+
+  async getFollowing(userId?: string, page = 1, limit = 10) {
+    const url = userId ? `/follows/users/${userId}/following` : '/follows/following';
+    const response = await apiClient.get(url, { params: { page, limit } });
+    return response.data as {
+      status: string;
+      following: FollowUser[];
+      meta: { total: number; page: number; limit: number; totalPages: number };
+    };
+  },
+
   async getFollowStatus(targetUserId: string): Promise<FollowStatusResponse> {
     const response = await apiClient.get(`/follows/status/${targetUserId}`);
     return response.data;

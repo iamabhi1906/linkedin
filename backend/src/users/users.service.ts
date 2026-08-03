@@ -155,4 +155,37 @@ export class UsersService {
   async updateLastLogin(id: string): Promise<void> {
     await this.userRepository.update(id, { lastLoginAt: new Date() });
   }
+
+  async searchUsers(
+    query?: string,
+    page = 1,
+    limit = 12,
+    currentUserId?: string,
+  ): Promise<{ users: User[]; total: number; page: number; totalPages: number }> {
+    const skip = (page - 1) * limit;
+    const qb = this.userRepository.createQueryBuilder('user');
+
+    if (currentUserId) {
+      qb.andWhere('user.id != :currentUserId', { currentUserId });
+    }
+
+    if (query && query.trim().length > 0) {
+      const q = `%${query.trim().toLowerCase()}%`;
+      qb.andWhere(
+        '(LOWER(user.name) LIKE :q OR LOWER(user.username) LIKE :q OR LOWER(user.headline) LIKE :q OR LOWER(user.location) LIKE :q)',
+        { q },
+      );
+    }
+
+    qb.orderBy('user.createdAt', 'DESC').skip(skip).take(limit);
+
+    const [users, total] = await qb.getManyAndCount();
+
+    return {
+      users,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }

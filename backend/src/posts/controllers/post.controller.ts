@@ -21,9 +21,11 @@ import { GetPostService } from '../services/get-post.service';
 import { UpdatePostService } from '../services/update-post.service';
 import { DeletePostService } from '../services/delete-post.service';
 import { FeedService } from '../services/feed.service';
+import { RepostPostService } from '../services/repost-post.service';
 import { PostMediaService } from '../../post-media/services/post-media.service';
 import { CreatePostDto } from '../dto/request/create-post.dto';
 import { UpdatePostDto } from '../dto/request/update-post.dto';
+import { RepostDto } from '../dto/request/repost.dto';
 import { type AuthenticatedRequest } from 'src/auth/interfaces/authenticated-request.interface';
 
 @Controller('posts')
@@ -34,6 +36,7 @@ export class PostController {
     private readonly updatePostService: UpdatePostService,
     private readonly deletePostService: DeletePostService,
     private readonly feedService: FeedService,
+    private readonly repostPostService: RepostPostService,
     private readonly mediaService: PostMediaService,
   ) {}
 
@@ -84,6 +87,17 @@ export class PostController {
   async delete(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     await this.deletePostService.execute(id, req.user.sub);
     return { status: 'success', message: 'Post deleted successfully' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @HttpPost(':id/repost')
+  async repost(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: RepostDto,
+  ) {
+    const result = await this.repostPostService.execute(id, req.user.sub, dto);
+    return { status: 'success', ...result };
   }
 
   @UseGuards(JwtAuthGuard)

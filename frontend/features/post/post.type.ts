@@ -14,7 +14,11 @@ export interface Post {
   visibility: 'PUBLIC' | 'CONNECTIONS' | 'ONLY_ME';
   likesCount: number;
   commentsCount: number;
+  repostsCount?: number;
   isLiked?: boolean;
+  isReposted?: boolean;
+  originalPostId?: string | null;
+  originalPost?: Post | null;
   media: { url?: string; fileUrl?: string; mediaType?: string }[];
   createdAt: string;
   updatedAt: string;
