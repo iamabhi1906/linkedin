@@ -12,19 +12,19 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { OrganizationType } from '../enums/organization-type.enum';
-import { OrganizationMember } from './organization-member.entity';
+import { OrganizationMember } from '../../organization-members/entities/organization-member.entity';
 
 @Entity('organizations')
 export class Organization {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ length: 150 })
-  name: string;
+  name!: string;
 
   @Index({ unique: true })
   @Column({ length: 100 })
-  slug: string;
+  slug!: string;
 
   @Column({ length: 220, nullable: true })
   tagline?: string;
@@ -43,7 +43,7 @@ export class Organization {
     enum: OrganizationType,
     default: OrganizationType.COMPANY,
   })
-  organizationType: OrganizationType;
+  organizationType!: OrganizationType;
 
   @Column({ nullable: true })
   logo?: string;
@@ -58,20 +58,20 @@ export class Organization {
   employeeCountRange?: string;
 
   @Column({ type: 'uuid' })
-  ownerId: string;
+  ownerId!: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'owner_id' })
-  owner: User;
+  @JoinColumn({ name: 'ownerId' })
+  owner!: User;
 
   @OneToMany(() => OrganizationMember, (member) => member.organization)
-  members: OrganizationMember[];
+  members!: OrganizationMember[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn()
   deletedAt?: Date;

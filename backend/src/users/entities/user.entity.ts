@@ -13,18 +13,18 @@ import { UserStatus } from '../enums/user-status.enum';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index({ unique: true })
   @Column({ length: 50 })
-  username: string;
+  username!: string;
 
   @Index({ unique: true })
   @Column({ length: 255 })
-  email: string;
+  email!: string;
 
   @Column({ length: 150 })
-  name: string;
+  name!: string;
 
   @Column({ nullable: true, select: false })
   password?: string;
@@ -33,7 +33,7 @@ export class User {
     type: 'enum',
     enum: AuthProvider,
   })
-  authProvider: AuthProvider;
+  authProvider!: AuthProvider;
 
   @Index({ unique: true })
   @Column({ nullable: true })
@@ -71,14 +71,14 @@ export class User {
   @Column({
     default: false,
   })
-  isEmailVerified: boolean;
+  isVerified!: boolean;
 
   @Column({
     type: 'enum',
     enum: UserStatus,
     default: UserStatus.ACTIVE,
   })
-  status: UserStatus;
+  status!: UserStatus;
 
   @Column({
     type: 'timestamp',
@@ -87,10 +87,10 @@ export class User {
   lastLoginAt?: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn()
   deletedAt?: Date;

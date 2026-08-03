@@ -1,0 +1,73 @@
+.dialogPaper {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.headerTitle {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1d2226;
+}
+
+.headerSubtitle {
+  font-size: 0.875rem;
+  color: #666666;
+  margin-top: 2px;
+}
+
+.formBox {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.fileUploadBox {
+  border: 2px dashed #0a66c2;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  background-color: #f3f8fe;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fileUploadBox:hover {
+  background-color: #e8f0fe;
+}
+
+.fileUploadText {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0a66c2;
+}
+
+.fileUploadSubtext {
+  font-size: 0.75rem;
+  color: #666666;
+  margin-top: 4px;
+}
+
+.selectedFileName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #137333;
+  margin-top: 6px;
+}
+
+.submitBtn {
+  background-color: #0a66c2;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 20px;
+  padding: 8px 24px;
+}
+
+.submitBtn:hover {
+  background-color: #004182;
+}
+
+.closeBtn {
+  color: #666666;
+}

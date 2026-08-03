@@ -1,19 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  Divider,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Divider, Typography } from '@mui/material';
 import { Google as GoogleIcon } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/store';
@@ -22,7 +14,6 @@ import { Signin, SigninSchema } from '@/features/auth/auth.types';
 import { FormInput } from '@/components/forms/form-input';
 import { useSnackbar } from 'notistack';
 import { signIn } from 'next-auth/react';
-import LinkedInLogo from '@/components/linkedin-logo';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -44,8 +35,8 @@ export default function SignInPage() {
       await dispatch(loginThunk(data)).unwrap();
       enqueueSnackbar('Signed in successfully', { variant: 'success' });
       router.push('/');
-    } catch (err: any) {
-      enqueueSnackbar(err || 'Invalid credentials', { variant: 'error' });
+    } catch (err: unknown) {
+      enqueueSnackbar((err as { message?: string }).message || 'Invalid credentials', { variant: 'error' });
     } finally {
       setSubmitting(false);
     }
@@ -56,12 +47,8 @@ export default function SignInPage() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#FFFFFF', pt: 4, pb: 8 }}>
+    <Box sx={{ pt: 4, pb: 8 }}>
       <Container maxWidth="xs">
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-          <LinkedInLogo width={120} height={32} />
-        </Box>
-
         <Card elevation={0} sx={{ border: '1px solid #E0E0E0', borderRadius: 2, p: 2 }}>
           <CardContent>
             <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>

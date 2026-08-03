@@ -1,0 +1,42 @@
+.dialogPaper {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerTitle {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1d2226;
+}
+
+.formBox {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 12px;
+}
+
+.saveBtn {
+  background-color: #0a66c2;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 20px;
+  padding: 8px 24px;
+}
+
+.saveBtn:hover {
+  background-color: #004182;
+}
+
+.cancelBtn {
+  color: #666666;
+  text-transform: none;
+  font-weight: 600;
+}

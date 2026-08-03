@@ -121,7 +121,7 @@ export class UsersService {
         .catch(() => null);
     }
 
-    user.profilePicture = filePath;
+    user.profilePicture = `http://localhost:5050${filePath}`;
     return await this.userRepository.save(user);
   }
 
@@ -141,14 +141,14 @@ export class UsersService {
       await this.uploadsService.deleteFile(user.coverPicture).catch(() => null);
     }
 
-    user.coverPicture = filePath;
+    user.coverPicture = `http://localhost:5050${filePath}`;
     return await this.userRepository.save(user);
   }
 
   async verifyEmail(email: string): Promise<void> {
     const user = await this.findByEmail(email);
     if (!user) throw new NotFoundException('User not found');
-    user.isEmailVerified = true;
+    user.isVerified = true;
     await this.userRepository.save(user);
   }
 

@@ -1,0 +1,110 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  padding: 16px 20px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.cardTitle {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1d2226;
+}
+
+.editBtn {
+  color: #666666 !important;
+  padding: 4px !important;
+}
+
+.editBtn:hover {
+  background-color: #f3f2ef !important;
+}
+
+.subText {
+  font-size: 0.85rem;
+  color: #666666;
+  word-break: break-all;
+}
+
+.privateSubtitle {
+  font-size: 0.775rem;
+  color: #666666;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.viewerList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.viewerItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.viewerLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+
+.viewerAvatar {
+  width: 40px !important;
+  height: 40px !important;
+  background-color: #0a66c2 !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  flex-shrink: 0;
+}
+
+.viewerInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.viewerName {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #1d2226;
+  line-height: 1.3;
+}
+
+.viewerRole {
+  font-size: 0.775rem;
+  color: #666666;
+}
+
+.viewBtn {
+  border: 1px solid #666666 !important;
+  color: #666666 !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 20px !important;
+  padding: 3px 14px !important;
+  font-size: 0.8rem !important;
+  min-width: unset !important;
+}
+
+.viewBtn:hover {
+  background-color: #f3f2ef !important;
+}

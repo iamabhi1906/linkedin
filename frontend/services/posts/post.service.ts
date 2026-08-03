@@ -1,10 +1,6 @@
+import { CreatePostPayload } from '@/features/post/post.type';
+export type { CreatePostPayload };
 import apiClient from '@/lib/axios';
-
-export interface CreatePostPayload {
-  content: string;
-  organizationId?: string;
-  visibility?: 'PUBLIC' | 'CONNECTIONS' | 'ONLY_ME';
-}
 
 export const postService = {
   async getFeed(page = 1, limit = 20) {
@@ -37,8 +33,8 @@ export const postService = {
     return response.data;
   },
 
-  async addComment(postId: string, content: string) {
-    const response = await apiClient.post(`/posts/${postId}/comments`, { content });
+  async addComment(postId: string, content: string, parentId?: string) {
+    const response = await apiClient.post(`/posts/${postId}/comments`, { content, parentId });
     return response.data;
   },
 

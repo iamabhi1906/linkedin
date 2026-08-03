@@ -11,14 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/infra/guards/jwt.guard';
 import { CreateOrganizationService } from '../services/create-organization.service';
@@ -30,7 +23,6 @@ import { CreateOrganizationDto } from '../dto/request/create-organization.dto';
 import { UpdateOrganizationDto } from '../dto/request/update-organization.dto';
 import { type AuthenticatedRequest } from 'src/auth/interfaces/authenticated-request.interface';
 
-@ApiTags('Organizations')
 @Controller('organizations')
 export class OrganizationController {
   constructor(
@@ -41,12 +33,6 @@ export class OrganizationController {
     private readonly logoService: OrganizationLogoService,
   ) {}
 
-  @ApiOperation({ summary: 'Create a new organization page' })
-  @ApiResponse({
-    status: 201,
-    description: 'Organization created successfully',
-  })
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(
@@ -61,29 +47,31 @@ export class OrganizationController {
     };
   }
 
-  @ApiOperation({ summary: 'List all organizations' })
   @Get()
   async findAll() {
     const organizations = await this.getOrgService.findAll();
     return { status: 'success', organizations };
   }
 
-  @ApiOperation({ summary: 'Get organization by slug' })
+  @UseGuards(JwtAuthGuard)
+  @Get('my')
+  async findMyOrganizations(@Req() req: AuthenticatedRequest) {
+    const organizations = await this.getOrgService.findForUser(req.user.sub);
+    return { status: 'success', organizations };
+  }
+
   @Get('slug/:slug')
   async findBySlug(@Param('slug') slug: string) {
     const organization = await this.getOrgService.findBySlug(slug);
     return { status: 'success', organization };
   }
 
-  @ApiOperation({ summary: 'Get organization by ID' })
   @Get(':id')
   async findById(@Param('id') id: string) {
     const organization = await this.getOrgService.findById(id);
     return { status: 'success', organization };
   }
 
-  @ApiOperation({ summary: 'Update organization details' })
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
@@ -103,8 +91,6 @@ export class OrganizationController {
     };
   }
 
-  @ApiOperation({ summary: 'Delete organization' })
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async delete(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
@@ -115,17 +101,6 @@ export class OrganizationController {
     };
   }
 
-  @ApiOperation({ summary: 'Upload organization logo' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: { type: 'string', format: 'binary' },
-      },
-    },
-  })
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   @Post(':id/logo')
@@ -147,17 +122,6 @@ export class OrganizationController {
     };
   }
 
-  @ApiOperation({ summary: 'Upload organization cover picture' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: { type: 'string', format: 'binary' },
-      },
-    },
-  })
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   @Post(':id/cover')

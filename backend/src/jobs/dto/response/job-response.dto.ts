@@ -1,42 +1,29 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { JobType } from '../../enums/job-type.enum';
 import { WorkplaceType } from '../../enums/workplace-type.enum';
 import { JobStatus } from '../../enums/job-status.enum';
 
 export class JobResponseDto {
-  @ApiProperty()
-  id: string;
+  id!: string;
 
-  @ApiProperty()
-  title: string;
+  title!: string;
 
-  @ApiProperty()
-  description: string;
+  description!: string;
 
-  @ApiPropertyOptional()
   location?: string;
 
-  @ApiProperty({ enum: JobType })
-  jobType: JobType;
+  jobType!: JobType;
 
-  @ApiProperty({ enum: WorkplaceType })
-  workplaceType: WorkplaceType;
+  workplaceType!: WorkplaceType;
 
-  @ApiProperty({ enum: JobStatus })
-  status: JobStatus;
+  status!: JobStatus;
 
-  @ApiProperty()
-  organizationId: string;
+  organizationId!: string;
 
-  @ApiProperty()
-  postedById: string;
+  postedById!: string;
 
-  @ApiPropertyOptional()
   salaryRange?: string;
 
-  @ApiProperty()
-  applicationsCount: number;
+  applicationsCount!: number;
 
-  @ApiProperty()
-  createdAt: Date;
+  createdAt!: Date;
 }

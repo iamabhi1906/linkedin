@@ -7,6 +7,7 @@ import { SnackbarProvider } from 'notistack';
 import store, { persistor } from './store';
 import ThemeProviderComp from './theme';
 import { PersistGate } from 'redux-persist/integration/react';
+import AuthInitializer from '@/components/auth-initializer';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -22,7 +23,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                   vertical: 'bottom',
                 }}
               >
-                {children}
+                <AuthInitializer>{children}</AuthInitializer>
               </SnackbarProvider>
             </ThemeProviderComp>
           </AppRouterCacheProvider>

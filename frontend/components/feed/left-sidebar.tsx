@@ -1,109 +1,153 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Avatar, Box, Card, CardContent, Divider, Typography } from '@mui/material';
-import { Bookmark as BookmarkIcon } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/app/store';
-import { useSession } from 'next-auth/react';
+import { Avatar, Box, Button, Card, Divider, Typography } from '@mui/material';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import GroupsIcon from '@mui/icons-material/Groups';
+import ArticleIcon from '@mui/icons-material/Article';
+import EventIcon from '@mui/icons-material/Event';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import StarsIcon from '@mui/icons-material/Stars';
+import BusinessIcon from '@mui/icons-material/Business';
+import AddIcon from '@mui/icons-material/Add';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/app/store';
+import { fetchOrganizationsThunk } from '@/features/organization/organization.slice';
+import styles from './left-sidebar.module.css';
+import { Organization } from '@/features/organization/organization.type';
 
 export default function LeftSidebar() {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const { profile } = useSelector((state: RootState) => state.user);
   const { user } = useSelector((state: RootState) => state.auth);
-  const { data: session } = useSession();
+  const { organizations } = useSelector((state: RootState) => state.organization);
 
-  const currentUser = user || session?.user;
+  const currentUser = profile || user;
+
+  useEffect(() => {
+    dispatch(fetchOrganizationsThunk());
+  }, [dispatch]);
 
   return (
-    <Card
-      elevation={0}
-      sx={{
-        border: '1px solid #E0E0E0',
-        borderRadius: 2,
-        overflow: 'hidden',
-        backgroundColor: '#FFFFFF',
-      }}
-    >
-      <Box
-        sx={{
-          height: 60,
-          background: 'linear-gradient(135deg, #A0B4B7 0%, #C4D3D5 100%)',
-          position: 'relative',
-        }}
-      />
+    <Box className={styles.container}>
+      <Card elevation={0} className={styles.profileCard}>
+        <Box className={styles.banner} />
+        <Box className={styles.profileContent}>
+          <Avatar src={currentUser?.profilePicture || undefined} onClick={() => router.push('/profile')} className={styles.avatar}>
+            {currentUser?.name?.[0] || 'U'}
+          </Avatar>
 
-      <CardContent sx={{ textAlign: 'center', pt: 0, pb: 2 }}>
-        <Avatar
-          src={currentUser?.profilePicture || currentUser?.coverPicture}
-          onClick={() => router.push('/profile')}
-          sx={{
-            width: 64,
-            height: 64,
-            margin: '-32px auto 8px auto',
-            border: '2px solid #FFFFFF',
-            cursor: 'pointer',
-            fontSize: '1.5rem',
-            backgroundColor: '#0A66C2',
-          }}
-        >
-          {currentUser?.firstName?.[0] || currentUser?.name?.[0] || 'U'}
-        </Avatar>
+          <Box className={styles.nameRow} onClick={() => router.push('/profile')}>
+            <Typography className={styles.userName}>{currentUser?.name}</Typography>
+            <VerifiedIcon className={styles.verifiedBadge} />
+          </Box>
 
-        <Typography
-          variant="subtitle1"
-          onClick={() => router.push('/profile')}
-          sx={{ fontWeight: 600, cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
-        >
-          {currentUser?.firstName
-            ? `${currentUser.firstName} ${currentUser.lastName || ''}`
-            : currentUser?.name || 'Welcome!'}
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem', mt: 0.5 }}>
-          {currentUser?.headline || 'Software Engineer at LinkedIn'}
-        </Typography>
-      </CardContent>
-
-      <Divider />
-
-      <Box sx={{ py: 1.5, px: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-            Profile viewers
-          </Typography>
-          <Typography variant="caption" color="primary.main" sx={{ fontWeight: 600 }}>
-            142
-          </Typography>
+          <Typography className={styles.userHeadline}>{currentUser?.headline}</Typography>
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-            Post impressions
-          </Typography>
-          <Typography variant="caption" color="primary.main" sx={{ fontWeight: 600 }}>
-            1,280
-          </Typography>
+      </Card>
+
+      <Box className={styles.orgCard}>
+        <Box className={styles.statRow}>
+          <Typography className={styles.statLabel}>Profile viewers</Typography>
+          <Typography className={styles.statValue}>60</Typography>
+        </Box>
+        <Box className={styles.statRow}>
+          <Typography className={styles.statLabel}>Post impressions</Typography>
+          <Typography className={styles.statValue}>12</Typography>
         </Box>
       </Box>
 
-      <Divider />
+      {organizations.length > 0 ? (
+        organizations.map((org: Organization) => (
+          <Card key={org.id} elevation={0} className={styles.orgCard}>
+            <Box className={styles.orgHeader}>
+              <Avatar src={org.logo || undefined} variant="rounded" sx={{ width: 36, height: 36, backgroundColor: '#0A66C2' }}>
+                {org.name[0] || 'O'}
+              </Avatar>
+              <Box>
+                <Typography className={styles.orgTitle}>{org.name}</Typography>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  <Typography className={styles.growthText}>
+                    Activity: <strong>{org?.activityCount || 0}</strong>
+                  </Typography>
+                  <Typography className={styles.growthText}>
+                    Visitors: <strong>{org?.visitorsCount || 2}</strong>
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
 
-      <Box
-        sx={{
-          py: 1.5,
-          px: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          cursor: 'pointer',
-          '&:hover': { backgroundColor: '#F3F2EF' },
-        }}
-      >
-        <BookmarkIcon sx={{ fontSize: 18, color: '#666666' }} />
-        <Typography variant="caption" sx={{ fontWeight: 600, color: '#1D2226' }}>
-          Saved items
-        </Typography>
-      </Box>
-    </Card>
+            <Divider sx={{ my: 0.5 }} />
+
+            <Typography className={styles.growthText}>Grow your business faster</Typography>
+            <Box className={styles.premiumLink}>
+              <StarsIcon sx={{ fontSize: 16 }} />
+              Try Premium Page for ₹0
+            </Box>
+            <Typography className={styles.growthText} sx={{ cursor: 'pointer', '&:hover': { color: '#0A66C2' } }}>
+              Advertise on LinkedIn
+            </Typography>
+
+            <Divider sx={{ my: 0.5 }} />
+
+            <Box className={styles.analyticsLink} onClick={() => router.push(`/organization/${org.slug || org.id}`)}>
+              See visitor analytics <ArrowForwardIcon sx={{ fontSize: 14 }} />
+            </Box>
+          </Card>
+        ))
+      ) : (
+        <Card elevation={0} className={styles.orgCard}>
+          <Box className={styles.orgHeader}>
+            <Avatar variant="rounded" sx={{ width: 36, height: 36, backgroundColor: '#0A66C2' }}>
+              <BusinessIcon />
+            </Avatar>
+            <Box>
+              <Typography className={styles.orgTitle}>My Organizations</Typography>
+              <Typography className={styles.growthText}>Manage or post jobs</Typography>
+            </Box>
+          </Box>
+          <Divider sx={{ my: 0.5 }} />
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            onClick={() => router.push('/organization/new')}
+            sx={{
+              borderRadius: 5,
+              textTransform: 'none',
+              fontWeight: 600,
+              color: '#0A66C2',
+              borderColor: '#0A66C2',
+            }}
+          >
+            Create Organization
+          </Button>
+        </Card>
+      )}
+
+      <Card elevation={0} className={styles.navCard}>
+        <Box className={styles.navItem}>
+          <BookmarkIcon sx={{ fontSize: 20, color: '#666666' }} />
+          <Typography className={styles.navItemText}>Saved items</Typography>
+        </Box>
+
+        <Box className={styles.navItem}>
+          <GroupsIcon sx={{ fontSize: 20, color: '#666666' }} />
+          <Typography className={styles.navItemText}>Groups</Typography>
+        </Box>
+
+        <Box className={styles.navItem}>
+          <ArticleIcon sx={{ fontSize: 20, color: '#666666' }} />
+          <Typography className={styles.navItemText}>Newsletters</Typography>
+        </Box>
+
+        <Box className={styles.navItem}>
+          <EventIcon sx={{ fontSize: 20, color: '#666666' }} />
+          <Typography className={styles.navItemText}>Events</Typography>
+        </Box>
+      </Card>
+    </Box>
   );
 }

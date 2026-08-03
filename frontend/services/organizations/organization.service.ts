@@ -1,16 +1,6 @@
+import { CreateOrgPayload } from '@/features/organization/organization.type';
+export type { CreateOrgPayload };
 import apiClient from '@/lib/axios';
-
-export interface CreateOrgPayload {
-  name: string;
-  slug?: string;
-  tagline?: string;
-  about?: string;
-  website?: string;
-  industry?: string;
-  organizationType?: string;
-  location?: string;
-  employeeCountRange?: string;
-}
 
 export const organizationService = {
   async create(payload: CreateOrgPayload) {
@@ -18,8 +8,13 @@ export const organizationService = {
     return response.data;
   },
 
+  async getUserOrganizations() {
+    const response = await apiClient.get('/organizations/my');
+    return response.data;
+  },
+
   async getAll() {
-    const response = await apiClient.get('/organizations');
+    const response = await apiClient.get('/organizations/my');
     return response.data;
   },
 

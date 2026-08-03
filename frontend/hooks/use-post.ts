@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/app/store';
-import { fetchFeedThunk, createPostThunk, toggleLikeThunk } from '@/features/post/post.slice';
+import { fetchFeedThunk, createPostThunk, toggleLikeThunk } from '@/features/post/post.action';
 import { CreatePostPayload } from '@/services/posts/post.service';
 
 export function usePost() {

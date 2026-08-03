@@ -1,29 +1,24 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { organizationService, CreateOrgPayload } from '@/services/organizations/organization.service';
+import { organizationService } from '@/services/organizations/organization.service';
+import { CreateOrgPayload } from './organization.type';
 
-export const fetchOrganizationsThunk = createAsyncThunk(
-  'organization/fetchAll',
-  async (_, { rejectWithValue }) => {
-    try {
-      const data = await organizationService.getAll();
-      return data.organizations;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch organizations');
-    }
-  },
-);
+export const fetchOrganizationsThunk = createAsyncThunk('organization/fetchAll', async (_, { rejectWithValue }) => {
+  try {
+    const data = await organizationService.getAll();
+    return data.organizations;
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to fetch organizations');
+  }
+});
 
-export const createOrganizationThunk = createAsyncThunk(
-  'organization/create',
-  async (payload: CreateOrgPayload, { rejectWithValue }) => {
-    try {
-      const data = await organizationService.create(payload);
-      return data.organization;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to create organization');
-    }
-  },
-);
+export const createOrganizationThunk = createAsyncThunk('organization/create', async (payload: CreateOrgPayload, { rejectWithValue }) => {
+  try {
+    const data = await organizationService.create(payload);
+    return data.organization;
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to create organization');
+  }
+});
 
 interface OrganizationState {
   organizations: any[];

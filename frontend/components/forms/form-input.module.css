@@ -1,0 +1,21 @@
+.inputBox {
+  margin: 0;
+  height: 47px;
+}
+.label {
+  font-weight: 400 !important;
+  margin-bottom: 4px !important;
+  font-size: 14px !important;
+  color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.formInputContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.errorMessage {
+  margin-top: 0px !important;
+  font-weight: 500 !important;
+}

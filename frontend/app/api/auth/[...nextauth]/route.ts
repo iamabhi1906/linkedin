@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import axios from 'axios';
@@ -32,10 +32,8 @@ export const authOptions: NextAuthOptions = {
             };
           }
           return null;
-        } catch (error: any) {
-          throw new Error(
-            error.response?.data?.message || 'Invalid email or password',
-          );
+        } catch (error: unknown) {
+          throw new Error((error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Invalid email or password');
         }
       },
     }),
@@ -47,8 +45,8 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, account }) {
       if (user) {
-        token.accessToken = (user as any).accessToken;
-        token.user = (user as any).user;
+        token.accessToken = token.accessToken;
+        token.user = user as User;
       }
       if (account?.provider === 'google') {
         try {
@@ -72,7 +70,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token) {
         session.accessToken = token.accessToken as string;
-        session.user = (token.user as any) || session.user;
+        session.user = (token.user as User) || session.user;
       }
       return session;
     },

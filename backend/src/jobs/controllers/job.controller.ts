@@ -10,12 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+
 import { JwtAuthGuard } from 'src/infra/guards/jwt.guard';
 import { CreateJobService } from '../services/create-job.service';
 import { GetJobService } from '../services/get-job.service';
@@ -28,7 +23,6 @@ import { JobType } from '../enums/job-type.enum';
 import { WorkplaceType } from '../enums/workplace-type.enum';
 import { type AuthenticatedRequest } from 'src/auth/interfaces/authenticated-request.interface';
 
-@ApiTags('Jobs')
 @Controller('jobs')
 export class JobController {
   constructor(
@@ -39,9 +33,6 @@ export class JobController {
     private readonly jobSearchService: JobSearchService,
   ) {}
 
-  @ApiOperation({ summary: 'Post a new job opening' })
-  @ApiResponse({ status: 201, description: 'Job created successfully' })
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Req() req: AuthenticatedRequest, @Body() dto: CreateJobDto) {
@@ -49,11 +40,12 @@ export class JobController {
     return { status: 'success', message: 'Job posted successfully', job };
   }
 
-  @ApiOperation({ summary: 'Search and filter job postings' })
   @Get('search')
   async search(
     @Query('q') q?: string,
     @Query('location') location?: string,
+    @Query('role') role?: string,
+    @Query('postedWithin') postedWithin?: number,
     @Query('jobType') jobType?: JobType,
     @Query('workplaceType') workplaceType?: WorkplaceType,
     @Query('page') page?: number,
@@ -62,6 +54,8 @@ export class JobController {
     const result = await this.jobSearchService.search({
       q,
       location,
+      role,
+      postedWithin,
       jobType,
       workplaceType,
       page,
@@ -70,15 +64,12 @@ export class JobController {
     return { status: 'success', ...result };
   }
 
-  @ApiOperation({ summary: 'Get job details by ID' })
   @Get(':id')
   async findById(@Param('id') id: string) {
     const job = await this.getJobService.findById(id);
     return { status: 'success', job };
   }
 
-  @ApiOperation({ summary: 'Update job posting details' })
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
@@ -90,8 +81,6 @@ export class JobController {
     return { status: 'success', message: 'Job updated successfully', job };
   }
 
-  @ApiOperation({ summary: 'Delete job posting' })
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async delete(@Param('id') id: string, @Req() req: AuthenticatedRequest) {

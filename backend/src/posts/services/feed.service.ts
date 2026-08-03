@@ -14,7 +14,8 @@ export class FeedService {
   async getFeed(
     page = 1,
     limit = 20,
-  ): Promise<{ posts: Post[]; total: number }> {
+    userId?: string,
+  ): Promise<{ posts: any[]; total: number }> {
     const skip = (page - 1) * limit;
     const [posts, total] = await this.postRepository.findAndCount({
       where: { visibility: PostVisibility.PUBLIC },
@@ -22,12 +23,24 @@ export class FeedService {
         author: true,
         organization: true,
         media: true,
+        likes: true,
       },
       order: { createdAt: 'DESC' },
       skip,
       take: limit,
     });
 
-    return { posts, total };
+    const postsWithLikedState = posts.map((post) => {
+      const isLiked = userId
+        ? post.likes?.some((like) => like.userId === userId) || false
+        : false;
+      const { likes, ...rest } = post;
+      return {
+        ...rest,
+        isLiked,
+      };
+    });
+
+    return { posts: postsWithLikedState, total };
   }
 }

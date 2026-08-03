@@ -1,0 +1,112 @@
+.container {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  padding: 24px;
+  width: 100%;
+  position: sticky;
+  top: 80px;
+}
+
+.companyRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+}
+
+.jobTitle {
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #1d2226;
+}
+
+.companyName {
+  font-size: 0.9rem;
+  color: #0a66c2;
+  font-weight: 600;
+}
+
+.locationText {
+  font-size: 0.85rem;
+  color: #666666;
+  margin-top: 4px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.typeBadge {
+  border: 1px solid #666666;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #666666;
+}
+
+.btnRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.applyBtn {
+  background-color: #0a66c2;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 20px;
+  padding: 8px 24px;
+  font-size: 0.95rem;
+}
+
+.applyBtn:hover {
+  background-color: #004182;
+}
+
+.appliedBtn {
+  background-color: #e6f4ea !important;
+  color: #137333 !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 20px !important;
+  padding: 8px 24px !important;
+  font-size: 0.95rem !important;
+}
+
+.saveBtn {
+  border: 1px solid #0a66c2;
+  color: #0a66c2;
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 20px;
+  padding: 8px 20px;
+}
+
+.sectionHeader {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1d2226;
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+
+.descriptionBody {
+  font-size: 0.9rem;
+  color: #333333;
+  line-height: 1.6;
+  white-space: pre-line;
+}

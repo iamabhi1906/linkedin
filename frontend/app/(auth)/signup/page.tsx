@@ -5,14 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/store';
 import { signupThunk } from '@/features/auth/auth.action';
@@ -45,21 +38,20 @@ export default function SignUpPage() {
         signupThunk({
           email: data.email,
           password: data.password,
-          firstName: data.firstName,
-          lastName: data.lastName,
+          name: `${data.firstName} ${data.lastName}`,
         }),
       ).unwrap();
       enqueueSnackbar('Account created successfully!', { variant: 'success' });
-      router.push('/');
-    } catch (err: any) {
-      enqueueSnackbar(err || 'Signup failed', { variant: 'error' });
+      router.replace('/signup');
+    } catch (err: unknown) {
+      enqueueSnackbar((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Signup failed', { variant: 'error' });
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#FFFFFF', pt: 4, pb: 8 }}>
+    <Box sx={{ pt: 4, pb: 8 }}>
       <Container maxWidth="xs">
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
           <LinkedInLogo width={120} height={32} />

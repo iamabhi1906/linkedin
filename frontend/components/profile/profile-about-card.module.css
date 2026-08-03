@@ -1,0 +1,35 @@
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1d2226;
+}
+
+.editBtn {
+  color: #666666;
+}
+
+.editBtn:hover {
+  background-color: #f3f2ef;
+}
+
+.aboutText {
+  font-size: 0.925rem;
+  color: #1d2226;
+  line-height: 1.6;
+  white-space: pre-line;
+}

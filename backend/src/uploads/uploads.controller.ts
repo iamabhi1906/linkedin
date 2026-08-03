@@ -8,20 +8,16 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { UploadsService } from './uploads.service';
 import { UploadFolder } from './enums/upload-folder.enum';
 import { JwtAuthGuard } from 'src/infra/guards/jwt.guard';
 
-@ApiTags('Uploads')
-@ApiBearerAuth()
 @Controller('uploads')
 @UseGuards(JwtAuthGuard)
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
-  @ApiOperation({ summary: 'Upload a single file' })
   @Post('single')
   @UseInterceptors(FileInterceptor('file'))
   async uploadSingle(
@@ -32,7 +28,6 @@ export class UploadsController {
     return { url };
   }
 
-  @ApiOperation({ summary: 'Upload multiple files' })
   @Post('multiple')
   @UseInterceptors(FilesInterceptor('files'))
   async uploadMultiple(
@@ -43,7 +38,6 @@ export class UploadsController {
     return { urls };
   }
 
-  @ApiOperation({ summary: 'Delete an uploaded file by path' })
   @Delete()
   async deleteFile(@Body('filePath') filePath: string) {
     await this.uploadsService.deleteFile(filePath);

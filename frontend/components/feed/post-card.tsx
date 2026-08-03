@@ -1,17 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  IconButton,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Avatar, Box, Button, Card, CardContent, Divider, IconButton, Stack, Typography } from '@mui/material';
 import {
   ThumbUpOutlined as LikeIcon,
   ThumbUp as LikedIcon,
@@ -22,48 +12,45 @@ import {
 } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/store';
-import { toggleLikeThunk } from '@/features/post/post.slice';
 import { postService } from '@/services/posts/post.service';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { useSnackbar } from 'notistack';
+import { Post } from '@/features/post/post.type';
+import { toggleLikeThunk } from '@/features/post/post.action';
+import { type Comment } from '@/features/comment/comment.type';
+import PostMediaCarousel from './post-media-carousel';
+import CommentSection from '../comments/comment-section';
+import styles from './post-card.module.css';
 
-interface PostCardProps {
-  post: {
-    id: string;
-    content: string;
-    author?: {
-      firstName?: string;
-      lastName?: string;
-      headline?: string;
-      profilePicture?: string;
-    };
-    organization?: {
-      name: string;
-      logo?: string;
-    };
-    media?: Array<{ fileUrl: string; mediaType: string }>;
-    likesCount: number;
-    commentsCount: number;
-    createdAt: string;
-  };
-}
-
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post }: { post: Post }) {
   const dispatch = useDispatch<AppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likesCount || 0);
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<any[]>([]);
-  const [commentText, setCommentText] = useState('');
+  const [comments, setComments] = useState<Comment[]>([]);
   const [commentsCount, setCommentsCount] = useState(post.commentsCount || 0);
+
+  useEffect(() => {
+    const nextLiked = post.isLiked || false;
+    const nextLikes = post.likesCount || 0;
+    if (nextLiked !== liked) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLiked(nextLiked);
+    }
+    if (nextLikes !== likesCount) {
+      setLikesCount(nextLikes);
+    }
+  }, [post.isLiked, post.likesCount, liked, likesCount]);
 
   const handleToggleLike = async () => {
     try {
       const res = await dispatch(toggleLikeThunk(post.id)).unwrap();
       setLiked(res.liked);
       setLikesCount(res.likesCount);
-    } catch {
+    } catch (err: unknown) {
+      enqueueSnackbar((err as { message?: string }).message || 'Failed to toggle like', { variant: 'error' });
       setLiked(!liked);
       setLikesCount(liked ? likesCount - 1 : likesCount + 1);
     }
@@ -76,29 +63,15 @@ export default function PostCard({ post }: PostCardProps) {
         const res = await postService.getComments(post.id);
         setComments(res.comments || []);
       } catch {
-        // silent error fallback
+        enqueueSnackbar('Failed to fetch comments', { variant: 'error' });
       }
     }
   };
 
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!commentText.trim()) return;
-    try {
-      const res = await postService.addComment(post.id, commentText);
-      setComments([res.comment, ...comments]);
-      setCommentsCount(commentsCount + 1);
-      setCommentText('');
-    } catch (err: any) {
-      enqueueSnackbar('Failed to add comment', { variant: 'error' });
-    }
-  };
-
-  const authorName = post.organization
-    ? post.organization.name
-    : `${post.author?.firstName || 'User'} ${post.author?.lastName || ''}`;
-
-  const authorAvatar = post.organization?.logo || post.author?.profilePicture;
+  const authorName: string = post.organization?.name || post.author?.name || 'User';
+  const authorAvatar =
+    (typeof post.organization?.logo === 'string' ? post.organization.logo : undefined) ||
+    (typeof post.author?.profilePicture === 'string' ? post.author.profilePicture : undefined);
 
   return (
     <Card
@@ -121,9 +94,6 @@ export default function PostCard({ post }: PostCardProps) {
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
                 {post.author?.headline || 'LinkedIn Member'}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {new Date(post.createdAt).toLocaleDateString()}
-              </Typography>
             </Box>
           </Box>
           <IconButton size="small">
@@ -135,23 +105,15 @@ export default function PostCard({ post }: PostCardProps) {
           {post.content}
         </Typography>
 
-        {post.media && post.media.length > 0 && (
-          <Box sx={{ my: 1, borderRadius: 1, overflow: 'hidden' }}>
-            {post.media.map((item, idx) => (
-              <img
-                key={idx}
-                src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050'}/${item.fileUrl}`}
-                alt="Post Media"
-                style={{ width: '100%', maxHeight: 400, objectFit: 'cover' }}
-              />
-            ))}
-          </Box>
-        )}
+        <PostMediaCarousel media={post.media} />
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1 }}>
-          <Typography variant="caption" color="text.secondary">
-            👍 {likesCount} likes
-          </Typography>
+          <Stack direction="row" spacing={1}>
+            <ThumbUpIcon color="primary" sx={{ fontSize: 16 }} />
+            <Typography variant="body2" color="text.secondary">
+              {likesCount} likes
+            </Typography>
+          </Stack>
           <Typography
             variant="caption"
             color="text.secondary"
@@ -168,74 +130,23 @@ export default function PostCard({ post }: PostCardProps) {
           <Button
             startIcon={liked ? <LikedIcon sx={{ color: '#0A66C2' }} /> : <LikeIcon />}
             onClick={handleToggleLike}
-            sx={{
-              color: liked ? '#0A66C2' : '#666666',
-              textTransform: 'none',
-              fontWeight: 600,
-              fontSize: '0.85rem',
-            }}
+            className={styles.postButtons}
+            sx={{ color: liked ? '#0A66C2' : '#666666' }}
           >
             Like
           </Button>
-          <Button
-            startIcon={<CommentIcon />}
-            onClick={handleToggleComments}
-            sx={{ color: '#666666', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }}
-          >
+          <Button startIcon={<CommentIcon />} onClick={handleToggleComments} className={styles.postButtons}>
             Comment
           </Button>
-          <Button
-            startIcon={<ShareIcon />}
-            sx={{ color: '#666666', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }}
-          >
+          <Button startIcon={<ShareIcon />} className={styles.postButtons}>
             Share
           </Button>
-          <Button
-            startIcon={<SendIcon />}
-            sx={{ color: '#666666', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }}
-          >
+          <Button startIcon={<SendIcon />} className={styles.postButtons}>
             Send
           </Button>
         </Box>
 
-        {showComments && (
-          <Box sx={{ mt: 2, pt: 1, borderTop: '1px solid #F3F2EF' }}>
-            <Box component="form" onSubmit={handleAddComment} sx={{ display: 'flex', gap: 1, mb: 2 }}>
-              <TextField
-                size="small"
-                fullWidth
-                placeholder="Add a comment..."
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 } }}
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!commentText.trim()}
-                sx={{ borderRadius: 4, textTransform: 'none', px: 2.5 }}
-              >
-                Post
-              </Button>
-            </Box>
-
-            {comments.map((c) => (
-              <Box key={c.id} sx={{ display: 'flex', gap: 1.5, mb: 1.5 }}>
-                <Avatar src={c.user?.profilePicture} sx={{ width: 32, height: 32 }}>
-                  {c.user?.firstName?.[0] || 'U'}
-                </Avatar>
-                <Box sx={{ backgroundColor: '#F2F2F2', borderRadius: 2, p: 1.2, width: '100%' }}>
-                  <Typography variant="caption" sx={{ fontWeight: 600, display: 'block' }}>
-                    {c.user?.firstName} {c.user?.lastName}
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                    {c.content}
-                  </Typography>
-                </Box>
-              </Box>
-            ))}
-          </Box>
-        )}
+        {showComments && <CommentSection postId={post.id} comments={comments} onCommentAdded={() => setCommentsCount((prev) => prev + 1)} />}
       </CardContent>
     </Card>
   );

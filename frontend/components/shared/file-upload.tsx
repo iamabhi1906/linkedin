@@ -12,13 +12,7 @@ interface FileUploadProps {
   buttonVariant?: 'contained' | 'outlined' | 'text';
 }
 
-export function FileUpload({
-  label = 'Upload File',
-  accept = 'image/*',
-  maxSizeMB = 5,
-  onUpload,
-  buttonVariant = 'outlined',
-}: FileUploadProps) {
+export function FileUpload({ label = 'Upload File', accept = 'image/*', maxSizeMB = 5, onUpload, buttonVariant = 'outlined' }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,13 +40,7 @@ export function FileUpload({
 
   return (
     <Box>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept={accept}
-        onChange={handleFileChange}
-        style={{ display: 'none' }}
-      />
+      <input ref={fileInputRef} type="file" accept={accept} onChange={handleFileChange} style={{ display: 'none' }} />
       <Button
         variant={buttonVariant}
         startIcon={loading ? <CircularProgress size={18} /> : <UploadIcon />}

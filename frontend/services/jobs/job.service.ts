@@ -1,18 +1,13 @@
 import apiClient from '@/lib/axios';
 
-export interface CreateJobPayload {
-  title: string;
-  description: string;
-  organizationId: string;
-  location?: string;
-  jobType?: string;
-  workplaceType?: string;
-  salaryRange?: string;
-}
+import { CreateJobPayload } from '@/features/job/job.type';
+export type { CreateJobPayload };
 
 export interface JobSearchQuery {
   q?: string;
   location?: string;
+  role?: string;
+  postedWithin?: number;
   jobType?: string;
   workplaceType?: string;
   page?: number;
@@ -24,6 +19,8 @@ export const jobService = {
     const params = new URLSearchParams();
     if (query.q) params.append('q', query.q);
     if (query.location) params.append('location', query.location);
+    if (query.role) params.append('role', query.role);
+    if (query.postedWithin) params.append('postedWithin', query.postedWithin.toString());
     if (query.jobType) params.append('jobType', query.jobType);
     if (query.workplaceType) params.append('workplaceType', query.workplaceType);
     if (query.page) params.append('page', query.page.toString());
@@ -43,8 +40,9 @@ export const jobService = {
     return response.data;
   },
 
-  async apply(jobId: string, coverLetter?: string, phone?: string, email?: string, file?: File) {
+  async apply(jobId: string, coverLetter?: string, phone?: string, email?: string, file?: File, name?: string) {
     const formData = new FormData();
+    if (name) formData.append('name', name);
     if (coverLetter) formData.append('coverLetter', coverLetter);
     if (phone) formData.append('phone', phone);
     if (email) formData.append('email', email);

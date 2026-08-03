@@ -55,7 +55,7 @@ export class AuthService {
       email: signupDto.email.toLowerCase(),
       password: hashedPassword,
       authProvider: AuthProvider.EMAIL,
-      isEmailVerified: false,
+      isVerified: true,
     });
 
     await this.emailVerificationService.sendVerificationOtp({
@@ -92,7 +92,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    if (!user.isEmailVerified) {
+    if (!user.isVerified) {
       throw new ForbiddenException(
         'Email not verified. Please verify your email before logging in.',
       );
@@ -130,7 +130,7 @@ export class AuthService {
       if (!user.profilePicture && googleAuthDto.profilePicture) {
         user.profilePicture = googleAuthDto.profilePicture;
       }
-      user.isEmailVerified = true;
+      user.isVerified = true;
       user = await this.usersService.save(user);
     } else {
       const username =
@@ -146,7 +146,7 @@ export class AuthService {
         authProvider: AuthProvider.GOOGLE,
         googleId: googleAuthDto.googleId,
         profilePicture: googleAuthDto.profilePicture,
-        isEmailVerified: true,
+        isVerified: true,
         status: UserStatus.ACTIVE,
       });
     }

@@ -11,28 +11,16 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/infra/guards/jwt.guard';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { type AuthenticatedRequest } from 'src/auth/interfaces/authenticated-request.interface';
 
-@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @ApiOperation({ summary: 'Get current user profile' })
-  @ApiResponse({ status: 200, description: 'Current user profile returned' })
-  @ApiBearerAuth()
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getMe(@Req() request: AuthenticatedRequest) {
@@ -43,9 +31,6 @@ export class UsersController {
     return user;
   }
 
-  @ApiOperation({ summary: 'Get public user profile by username' })
-  @ApiResponse({ status: 200, description: 'User profile found' })
-  @ApiResponse({ status: 404, description: 'User not found' })
   @Get('profile/:username')
   async getProfileByUsername(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
@@ -55,9 +40,6 @@ export class UsersController {
     return user;
   }
 
-  @ApiOperation({ summary: 'Get public user profile by user ID' })
-  @ApiResponse({ status: 200, description: 'User profile found' })
-  @ApiResponse({ status: 404, description: 'User not found' })
   @Get(':id')
   async getProfileById(@Param('id') id: string) {
     const user = await this.usersService.findById(id);
@@ -67,11 +49,7 @@ export class UsersController {
     return user;
   }
 
-  @ApiOperation({ summary: 'Update profile details' })
-  @ApiResponse({ status: 200, description: 'Profile updated successfully' })
-  @ApiResponse({ status: 409, description: 'Username already taken' })
-  @ApiBearerAuth()
-  @Patch('profile')
+  @Patch('me')
   @UseGuards(JwtAuthGuard)
   async updateProfile(
     @Req() request: AuthenticatedRequest,
@@ -88,22 +66,6 @@ export class UsersController {
     };
   }
 
-  @ApiOperation({ summary: 'Upload profile picture' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-          description: 'Image file (jpeg, png, webp, gif, max 5MB)',
-        },
-      },
-    },
-  })
-  @ApiResponse({ status: 200, description: 'Profile picture uploaded' })
-  @ApiBearerAuth()
   @Post('profile-picture')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
@@ -123,22 +85,6 @@ export class UsersController {
     };
   }
 
-  @ApiOperation({ summary: 'Upload cover picture' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-          description: 'Image file (jpeg, png, webp, gif, max 5MB)',
-        },
-      },
-    },
-  })
-  @ApiResponse({ status: 200, description: 'Cover picture uploaded' })
-  @ApiBearerAuth()
   @Post('cover-picture')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))

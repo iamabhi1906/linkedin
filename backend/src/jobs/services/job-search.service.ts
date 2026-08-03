@@ -9,6 +9,8 @@ import { JobStatus } from '../enums/job-status.enum';
 export interface JobSearchQuery {
   q?: string;
   location?: string;
+  role?: string;
+  postedWithin?: number;
   jobType?: JobType;
   workplaceType?: WorkplaceType;
   page?: number;
@@ -35,7 +37,7 @@ export class JobSearchService {
 
     if (query.q) {
       qb.andWhere(
-        '(job.title ILIKE :q OR job.description ILIKE :q OR organization.name ILIKE :q)',
+        '(job.title ILIKE :q OR job.description ILIKE :q OR job.role ILIKE :q OR organization.name ILIKE :q)',
         { q: `%${query.q}%` },
       );
     }
@@ -44,6 +46,20 @@ export class JobSearchService {
       qb.andWhere('job.location ILIKE :location', {
         location: `%${query.location}%`,
       });
+    }
+
+    if (query.role) {
+      qb.andWhere('job.role ILIKE :role', {
+        role: `%${query.role}%`,
+      });
+    }
+
+    if (query.postedWithin) {
+      const hours = Number(query.postedWithin);
+      if (!isNaN(hours) && hours > 0) {
+        const pastDate = new Date(Date.now() - hours * 60 * 60 * 1000);
+        qb.andWhere('job.createdAt >= :pastDate', { pastDate });
+      }
     }
 
     if (query.jobType) {

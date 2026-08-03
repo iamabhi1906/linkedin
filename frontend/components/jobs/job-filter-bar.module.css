@@ -1,0 +1,43 @@
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.filterForm {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.inputField {
+  flex: 1;
+  min-width: 180px;
+}
+
+.selectField {
+  min-width: 180px;
+}
+
+.searchBtn {
+  background-color: #0a66c2;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 20px;
+  padding: 8px 24px;
+  font-size: 0.9rem;
+}
+
+.searchBtn:hover {
+  background-color: #004182;
+}
+
+.resetBtn {
+  color: #666666;
+  text-transform: none;
+  font-weight: 600;
+}

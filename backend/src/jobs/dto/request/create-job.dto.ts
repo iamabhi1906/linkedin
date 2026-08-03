@@ -1,4 +1,3 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEnum,
   IsNotEmpty,
@@ -12,53 +11,51 @@ import { WorkplaceType } from '../../enums/workplace-type.enum';
 import { JobStatus } from '../../enums/job-status.enum';
 
 export class CreateJobDto {
-  @ApiProperty({
-    description: 'Job position title',
-    example: 'Senior Software Engineer',
-  })
   @IsString()
   @IsNotEmpty({ message: 'Job title is required' })
   @MaxLength(150)
   title!: string;
 
-  @ApiProperty({ description: 'Job description & requirements' })
+  @IsString()
+  @IsNotEmpty({ message: 'Job role is required' })
+  @MaxLength(150)
+  role!: string;
+
   @IsString()
   @IsNotEmpty({ message: 'Job description is required' })
   description!: string;
 
-  @ApiProperty({ description: 'Organization ID posting the job' })
   @IsUUID()
   @IsNotEmpty()
   organizationId!: string;
 
-  @ApiPropertyOptional({
-    description: 'Job location',
-    example: 'San Francisco, CA',
-  })
-  @IsOptional()
   @IsString()
+  @IsNotEmpty({ message: 'Location is required' })
   @MaxLength(150)
-  location?: string;
+  location!: string;
 
-  @ApiPropertyOptional({ enum: JobType, default: JobType.FULL_TIME })
+  @IsString()
+  @IsNotEmpty({ message: 'Experience needed is required' })
+  @MaxLength(100)
+  experienceNeeded!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Package offered in INR (₹) is required' })
+  @MaxLength(100)
+  packageOffered!: string;
+
   @IsOptional()
   @IsEnum(JobType)
   jobType?: JobType;
 
-  @ApiPropertyOptional({ enum: WorkplaceType, default: WorkplaceType.ON_SITE })
   @IsOptional()
   @IsEnum(WorkplaceType)
   workplaceType?: WorkplaceType;
 
-  @ApiPropertyOptional({ enum: JobStatus, default: JobStatus.OPEN })
   @IsOptional()
   @IsEnum(JobStatus)
   status?: JobStatus;
 
-  @ApiPropertyOptional({
-    description: 'Salary range',
-    example: '$120,000 - $150,000 / year',
-  })
   @IsOptional()
   @IsString()
   @MaxLength(100)

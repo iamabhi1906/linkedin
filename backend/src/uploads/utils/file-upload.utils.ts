@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
 export const ALLOWED_MIME_TYPES = [
+  'application/pdf',
   'image/jpeg',
   'image/png',
   'image/webp',

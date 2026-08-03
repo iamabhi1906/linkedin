@@ -1,59 +1,93 @@
 'use client';
 
-import React, { useState } from 'react';
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-  Typography,
-} from '@mui/material';
-import {
-  Image as ImageIcon,
-  Event as EventIcon,
-  Article as ArticleIcon,
-  Close as CloseIcon,
-} from '@mui/icons-material';
+import React, { useRef, useState } from 'react';
+import { Avatar, Box, Button, Card, CardContent, Dialog, IconButton, Menu, MenuItem, TextField, Typography } from '@mui/material';
+import ImageIcon from '@mui/icons-material/Image';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ArticleIcon from '@mui/icons-material/Article';
+import CloseIcon from '@mui/icons-material/Close';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import PollIcon from '@mui/icons-material/Poll';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PublicIcon from '@mui/icons-material/Public';
+import PeopleIcon from '@mui/icons-material/People';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/app/store';
-import { createPostThunk } from '@/features/post/post.slice';
+import { postService } from '@/services/posts/post.service';
 import { useSnackbar } from 'notistack';
-import { useSession } from 'next-auth/react';
+import { createPostThunk, fetchFeedThunk } from '@/features/post/post.action';
+import styles from './create-post-card.module.css';
 
 export default function CreatePostCard() {
   const dispatch = useDispatch<AppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
+  const { profile } = useSelector((state: RootState) => state.user);
   const { user } = useSelector((state: RootState) => state.auth);
-  const { data: session } = useSession();
+  const currentUser = profile || user;
 
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState('');
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<{ url: string; type: string }[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [audience, setAudience] = useState<'Anyone' | 'Connections only'>('Anyone');
+  const [audienceAnchor, setAudienceAnchor] = useState<null | HTMLElement>(null);
 
-  const currentUser = user || session?.user;
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleOpen = () => setOpen(true);
+
   const handleClose = () => {
     setOpen(false);
     setContent('');
+    setMediaFiles([]);
+    setPreviews([]);
+  };
+
+  const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selected = Array.from(e.target.files);
+      const newFiles = [...mediaFiles, ...selected];
+      setMediaFiles(newFiles);
+
+      const newPreviews = selected.map((file) => ({
+        url: URL.createObjectURL(file),
+        type: file.type.startsWith('video') ? 'video' : 'image',
+      }));
+      setPreviews((prev) => [...prev, ...newPreviews]);
+
+      if (!open) {
+        setOpen(true);
+      }
+    }
+  };
+
+  const handleRemoveMedia = (index: number) => {
+    setMediaFiles((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async () => {
-    if (!content.trim()) return;
+    if (!content.trim() && mediaFiles.length === 0) return;
     setSubmitting(true);
     try {
-      await dispatch(createPostThunk({ content })).unwrap();
-      enqueueSnackbar('Post published!', { variant: 'success' });
+      const newPost = await dispatch(createPostThunk({ content })).unwrap();
+
+      if (mediaFiles.length > 0 && newPost?.id) {
+        for (const file of mediaFiles) {
+          await postService.attachMedia(newPost.id, file);
+        }
+      }
+
+      await dispatch(fetchFeedThunk({ page: 1, limit: 20 }));
+      enqueueSnackbar('Post published successfully!', { variant: 'success' });
       handleClose();
-    } catch (err: any) {
-      enqueueSnackbar(err || 'Failed to publish post', { variant: 'error' });
+    } catch (err: unknown) {
+      enqueueSnackbar((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to publish post', {
+        variant: 'error',
+      });
     } finally {
       setSubmitting(false);
     }
@@ -61,87 +95,79 @@ export default function CreatePostCard() {
 
   return (
     <>
-      <Card
-        elevation={0}
-        sx={{
-          border: '1px solid #E0E0E0',
-          borderRadius: 2,
-          backgroundColor: '#FFFFFF',
-          mb: 2,
-        }}
-      >
+      <input type="file" ref={fileInputRef} hidden multiple accept="image/*,video/*" onChange={handleMediaSelect} />
+
+      <Card elevation={0} className={styles.card}>
         <CardContent sx={{ p: 2, pb: '16px !important' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
-            <Avatar src={currentUser?.profilePicture || currentUser?.image}>
-              {currentUser?.firstName?.[0] || currentUser?.name?.[0] || 'U'}
+          <Box className={styles.topRow}>
+            <Avatar src={currentUser?.profilePicture || undefined} sx={{ width: 48, height: 48, backgroundColor: '#0a66c2', fontWeight: 600 }}>
+              {currentUser?.name?.[0] || 'U'}
             </Avatar>
-            <Button
-              onClick={handleOpen}
-              fullWidth
-              sx={{
-                justifyContent: 'flex-start',
-                borderRadius: 5,
-                borderColor: '#666666',
-                color: '#666666',
-                textTransform: 'none',
-                py: 1.2,
-                px: 2,
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                border: '1px solid #B2B2B2',
-                '&:hover': { backgroundColor: '#F3F2EF', borderColor: '#666666' },
-              }}
-            >
-              Start a post
+            <Button onClick={handleOpen} className={styles.startPostBtn}>
+              Start a post, try writing with AI
             </Button>
           </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+          <Box className={styles.actionRow}>
             <Button
-              onClick={handleOpen}
-              startIcon={<ImageIcon sx={{ color: '#378FE9' }} />}
-              sx={{ color: '#666666', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }}
+              onClick={() => fileInputRef.current?.click()}
+              startIcon={<ImageIcon sx={{ color: '#378FE9', fontSize: 24 }} />}
+              className={styles.actionBtn}
             >
               Media
             </Button>
-            <Button
-              onClick={handleOpen}
-              startIcon={<EventIcon sx={{ color: '#C76F16' }} />}
-              sx={{ color: '#666666', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }}
-            >
+            <Button onClick={handleOpen} startIcon={<CalendarMonthIcon sx={{ color: '#C76F16', fontSize: 24 }} />} className={styles.actionBtn}>
               Event
             </Button>
-            <Button
-              onClick={handleOpen}
-              startIcon={<ArticleIcon sx={{ color: '#E06847' }} />}
-              sx={{ color: '#666666', textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }}
-            >
+            <Button onClick={handleOpen} startIcon={<ArticleIcon sx={{ color: '#E06847', fontSize: 24 }} />} className={styles.actionBtn}>
               Write article
             </Button>
           </Box>
         </CardContent>
       </Card>
 
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Create a post
-          </Typography>
-          <IconButton onClick={handleClose}>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" slotProps={{ paper: { className: styles.dialogPaper } }}>
+        <Box className={styles.dialogHeader}>
+          <Box className={styles.userHeaderBox}>
+            <Avatar
+              src={currentUser?.profilePicture || undefined}
+              sx={{ width: 52, height: 52, backgroundColor: '#0a66c2', fontWeight: 600, fontSize: '1.25rem' }}
+            >
+              {currentUser?.name?.[0] || 'U'}
+            </Avatar>
+            <Box className={styles.userInfo}>
+              <Typography className={styles.userName}>{currentUser?.name || 'Abhishek Kumar'}</Typography>
+              <Button size="small" className={styles.audiencePill} onClick={(e) => setAudienceAnchor(e.currentTarget)}>
+                {audience === 'Anyone' ? <PublicIcon sx={{ fontSize: 14 }} /> : <PeopleIcon sx={{ fontSize: 14 }} />}
+                {audience} <ArrowDropDownIcon sx={{ fontSize: 16 }} />
+              </Button>
+            </Box>
+          </Box>
+
+          <IconButton onClick={handleClose} className={styles.closeIconBtn}>
             <CloseIcon />
           </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-            <Avatar src={currentUser?.profilePicture || currentUser?.image}>
-              {currentUser?.firstName?.[0] || currentUser?.name?.[0] || 'U'}
-            </Avatar>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              {currentUser?.firstName
-                ? `${currentUser.firstName} ${currentUser.lastName || ''}`
-                : currentUser?.name || 'User'}
-            </Typography>
-          </Box>
+        </Box>
+        <Menu anchorEl={audienceAnchor} open={Boolean(audienceAnchor)} onClose={() => setAudienceAnchor(null)}>
+          <MenuItem
+            onClick={() => {
+              setAudience('Anyone');
+              setAudienceAnchor(null);
+            }}
+          >
+            <PublicIcon sx={{ mr: 1, fontSize: 18, color: '#666666' }} /> Anyone
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setAudience('Connections only');
+              setAudienceAnchor(null);
+            }}
+          >
+            <PeopleIcon sx={{ mr: 1, fontSize: 18, color: '#666666' }} /> Connections only
+          </MenuItem>
+        </Menu>
+
+        <Box className={styles.contentBox}>
           <TextField
             multiline
             rows={5}
@@ -150,19 +176,58 @@ export default function CreatePostCard() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             variant="standard"
-            slotProps={{ input: { disableUnderline: true } }}
+            slotProps={{ input: { disableUnderline: true, className: styles.inputField } }}
           />
-        </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
+
+          {previews.length > 0 && (
+            <Box className={styles.mediaPreviewContainer}>
+              {previews.map((p, idx) => (
+                <Box key={idx} className={styles.mediaPreviewItem}>
+                  {p.type === 'video' ? (
+                    <video src={p.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={p.url} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  )}
+                  <IconButton size="small" onClick={() => handleRemoveMedia(idx)} className={styles.removeMediaBtn}>
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </Box>
+
+        <Box className={styles.toolbarRow}>
+          <Box className={styles.toolbarLeft}>
+            <IconButton className={styles.iconToolBtn} title="Add Media" onClick={() => fileInputRef.current?.click()}>
+              <PhotoSizeSelectActualIcon sx={{ fontSize: 22, color: mediaFiles.length > 0 ? '#0A66C2' : 'inherit' }} />
+            </IconButton>
+
+            <IconButton className={styles.iconToolBtn} title="Create a Poll">
+              <PollIcon sx={{ fontSize: 22 }} />
+            </IconButton>
+
+            <IconButton className={styles.iconToolBtn} title="Celebrate an occasion">
+              <WorkspacePremiumIcon sx={{ fontSize: 22 }} />
+            </IconButton>
+          </Box>
+        </Box>
+
+        <Box className={styles.dialogFooter}>
+          <IconButton className={styles.iconToolBtn} title="Schedule post">
+            <AccessTimeIcon sx={{ fontSize: 22 }} />
+          </IconButton>
+
           <Button
             onClick={handleSubmit}
             variant="contained"
-            disabled={!content.trim() || submitting}
-            sx={{ borderRadius: 5, textTransform: 'none', px: 3, fontWeight: 600 }}
+            disabled={(!content.trim() && mediaFiles.length === 0) || submitting}
+            className={styles.postSubmitBtn}
           >
-            Post
+            {submitting ? 'Posting...' : 'Post'}
           </Button>
-        </DialogActions>
+        </Box>
       </Dialog>
     </>
   );

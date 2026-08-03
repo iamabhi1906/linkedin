@@ -9,12 +9,6 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignupDTO } from './dto/signup.dto';
 import { LoginDTO } from './dto/login.dto';
@@ -29,7 +23,6 @@ import { type AuthenticatedRequest } from './interfaces/authenticated-request.in
 import { CookieService } from './cookie.service';
 import { JwtAuthGuard } from 'src/infra/guards/jwt.guard';
 
-@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -37,10 +30,6 @@ export class AuthController {
     private readonly cookieService: CookieService,
   ) {}
 
-  @ApiOperation({ summary: 'Register a new user account' })
-  @ApiResponse({ status: 201, description: 'User registered successfully' })
-  @ApiResponse({ status: 400, description: 'Validation error' })
-  @ApiResponse({ status: 409, description: 'User or username already exists' })
   @Post(['register', 'signup'])
   async signup(@Body() signupDto: SignupDTO) {
     const user = await this.authService.signup(signupDto);
@@ -52,10 +41,6 @@ export class AuthController {
     };
   }
 
-  @ApiOperation({ summary: 'Login with email and password' })
-  @ApiResponse({ status: 200, description: 'Login successful' })
-  @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  @ApiResponse({ status: 403, description: 'Email not verified or suspended' })
   @Post(['login', 'signin'])
   @HttpCode(200)
   async login(
@@ -76,8 +61,6 @@ export class AuthController {
     };
   }
 
-  @ApiOperation({ summary: 'Authenticate / register using Google OAuth' })
-  @ApiResponse({ status: 200, description: 'Google authentication successful' })
   @Post('google')
   @HttpCode(200)
   async googleAuth(
@@ -98,8 +81,6 @@ export class AuthController {
     };
   }
 
-  @ApiOperation({ summary: 'Request password reset OTP via email' })
-  @ApiResponse({ status: 200, description: 'OTP sent if user exists' })
   @Post('forgot-password')
   @HttpCode(200)
   async forgotPassword(@Body() dto: ForgotPasswordDTO) {
@@ -111,9 +92,6 @@ export class AuthController {
     };
   }
 
-  @ApiOperation({ summary: 'Reset password using OTP' })
-  @ApiResponse({ status: 200, description: 'Password reset successful' })
-  @ApiResponse({ status: 400, description: 'Invalid or expired OTP' })
   @Post('reset-password')
   @HttpCode(200)
   async resetPassword(@Body() dto: ResetPasswordDTO) {
@@ -125,9 +103,6 @@ export class AuthController {
     };
   }
 
-  @ApiOperation({ summary: 'Verify email with OTP' })
-  @ApiResponse({ status: 200, description: 'Email verified successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid or expired OTP' })
   @Post(['verify-email', 'verify-otp', 'verify'])
   @HttpCode(200)
   async verifyOtp(@Body() verifyOtpDto: VerifyOtpDTO) {
@@ -138,8 +113,6 @@ export class AuthController {
     };
   }
 
-  @ApiOperation({ summary: 'Resend email verification OTP' })
-  @ApiResponse({ status: 200, description: 'OTP resent successfully' })
   @Post(['resend-verification', 'resend-otp', 'resend'])
   @HttpCode(200)
   async resendOtp(@Body() sendOtpDto: SendOtpDTO) {
@@ -150,18 +123,12 @@ export class AuthController {
     };
   }
 
-  @ApiOperation({ summary: 'Get current authenticated user profile' })
-  @ApiResponse({ status: 200, description: 'Returns authenticated user' })
-  @ApiBearerAuth()
   @Get('me')
   @UseGuards(JwtAuthGuard)
   getMe(@Req() request: AuthenticatedRequest) {
     return this.authService.getMe(request.user.sub);
   }
 
-  @ApiOperation({ summary: 'Refresh JWT access token' })
-  @ApiResponse({ status: 200, description: 'Tokens refreshed' })
-  @ApiResponse({ status: 401, description: 'Invalid refresh token' })
   @Post('refresh')
   @HttpCode(200)
   async refresh(
@@ -190,8 +157,6 @@ export class AuthController {
     };
   }
 
-  @ApiOperation({ summary: 'Logout and clear auth cookies' })
-  @ApiResponse({ status: 200, description: 'Logout successful' })
   @Post(['logout', 'signout'])
   @HttpCode(200)
   logout(@Res({ passthrough: true }) response: Response) {

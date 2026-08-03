@@ -33,7 +33,7 @@ export class EmailVerificationService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    if (user.isEmailVerified) {
+    if (user.isVerified) {
       throw new BadRequestException('Email already verified');
     }
     const existing = await this.emailVerificationRepository.findOne({

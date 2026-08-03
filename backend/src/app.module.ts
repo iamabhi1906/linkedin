@@ -13,8 +13,13 @@ import { EmailVerificationModule } from './email-verification/email-verification
 import { MailModule } from './mail/mail.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { OrganizationsModule } from './organizations/organizations.module';
+import { OrganizationMembersModule } from './organization-members/organization-members.module';
 import { PostsModule } from './posts/posts.module';
+import { PostMediaModule } from './post-media/post-media.module';
+import { PostLikesModule } from './post-likes/post-likes.module';
+import { PostCommentsModule } from './post-comments/post-comments.module';
 import { JobsModule } from './jobs/jobs.module';
+import { JobApplicationsModule } from './job-applications/job-applications.module';
 
 @Module({
   imports: [
@@ -31,8 +36,13 @@ import { JobsModule } from './jobs/jobs.module';
     PasswordModule,
     UploadsModule,
     OrganizationsModule,
+    OrganizationMembersModule,
     PostsModule,
+    PostMediaModule,
+    PostLikesModule,
+    PostCommentsModule,
     JobsModule,
+    JobApplicationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

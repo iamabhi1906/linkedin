@@ -1,14 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import {
-  persistStore,
-  persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from 'redux-persist';
+import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import authReducer from '@/features/auth/auth.slice';
@@ -16,6 +7,7 @@ import userReducer from '@/features/user/user.slice';
 import postReducer from '@/features/post/post.slice';
 import organizationReducer from '@/features/organization/organization.slice';
 import jobReducer from '@/features/job/job.slice';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 const persistedAuthReducer = persistReducer(
   {
@@ -48,3 +40,6 @@ export default store;
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

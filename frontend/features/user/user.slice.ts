@@ -1,29 +1,9 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { userService, UpdateProfilePayload } from '@/services/users/user.service';
-
-export const fetchMeThunk = createAsyncThunk('user/fetchMe', async (_, { rejectWithValue }) => {
-  try {
-    const data = await userService.getMe();
-    return data.user;
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || 'Failed to fetch user profile');
-  }
-});
-
-export const updateProfileThunk = createAsyncThunk(
-  'user/updateProfile',
-  async (payload: UpdateProfilePayload, { rejectWithValue }) => {
-    try {
-      const data = await userService.updateProfile(payload);
-      return data.user;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to update profile');
-    }
-  },
-);
+import { createSlice } from '@reduxjs/toolkit';
+import { User } from './user.type';
+import { fetchMeThunk, updateProfileThunk } from './user.action';
 
 interface UserState {
-  profile: any | null;
+  profile: User | null;
   loading: boolean;
   error: string | null;
 }
@@ -52,7 +32,7 @@ const userSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(updateProfileThunk.fulfilled, (state, action) => {
-        state.profile = action.payload;
+        state.profile = { ...state.profile, ...action.payload.data };
       });
   },
 });

@@ -1,31 +1,21 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PostVisibility } from '../../enums/post-visibility.enum';
 
 export class PostResponseDto {
-  @ApiProperty()
-  id: string;
+  id!: string;
 
-  @ApiProperty()
-  authorId: string;
+  authorId!: string;
 
-  @ApiPropertyOptional()
   organizationId?: string;
 
-  @ApiProperty()
-  content: string;
+  content!: string;
 
-  @ApiProperty({ enum: PostVisibility })
-  visibility: PostVisibility;
+  visibility!: PostVisibility;
 
-  @ApiProperty()
-  likesCount: number;
+  likesCount!: number;
 
-  @ApiProperty()
-  commentsCount: number;
+  commentsCount!: number;
 
-  @ApiProperty()
-  createdAt: Date;
+  createdAt!: Date;
 
-  @ApiProperty()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

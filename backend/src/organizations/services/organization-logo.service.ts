@@ -6,8 +6,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Organization } from '../entities/organization.entity';
-import { OrganizationMember } from '../entities/organization-member.entity';
-import { OrganizationRole } from '../enums/organization-role.enum';
+import { OrganizationMember } from '../../organization-members/entities/organization-member.entity';
+import { OrganizationRole } from '../../organization-members/enums/organization-role.enum';
 import { UploadsService } from '../../uploads/uploads.service';
 import { UploadFolder } from '../../uploads/enums/upload-folder.enum';
 

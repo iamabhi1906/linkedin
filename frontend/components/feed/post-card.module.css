@@ -1,0 +1,10 @@
+.postButtons {
+  color: #666666 !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}

@@ -8,9 +8,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import slugify from 'slugify';
 import { Organization } from '../entities/organization.entity';
-import { OrganizationMember } from '../entities/organization-member.entity';
+import { OrganizationMember } from '../../organization-members/entities/organization-member.entity';
 import { UpdateOrganizationDto } from '../dto/request/update-organization.dto';
-import { OrganizationRole } from '../enums/organization-role.enum';
+import { OrganizationRole } from '../../organization-members/enums/organization-role.enum';
 
 @Injectable()
 export class UpdateOrganizationService {

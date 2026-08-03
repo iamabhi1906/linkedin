@@ -1,61 +1,95 @@
 'use client';
 
-import React from 'react';
-import { Box, Card, CardContent, List, ListItem, ListItemText, Typography } from '@mui/material';
-import { Info as InfoIcon } from '@mui/icons-material';
+import { useState } from 'react';
+import { Box, Button, Card, Typography } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import styles from './right-sidebar.module.css';
 
 export default function RightSidebar() {
-  const news = [
-    { title: 'AI Tech Hiring surge in 2026', time: '1h ago', readers: '14,290 readers' },
-    { title: 'Remote Work Trends Shift', time: '3h ago', readers: '8,410 readers' },
-    { title: 'Next.js 16 Released with App Router Boost', time: '5h ago', readers: '22,100 readers' },
-    { title: 'Startup Funding Rebounds Globally', time: '12h ago', readers: '5,630 readers' },
+  const [showMoreNews, setShowMoreNews] = useState(false);
+  const [showMorePuzzles, setShowMorePuzzles] = useState(false);
+
+  const newsItems = [
+    { title: 'CWG 2026: India finishes with 39 medals', time: '3h ago', readers: '6,491 readers' },
+    { title: 'Family offices raise the stakes for talent', time: '4h ago', readers: '3,134 readers' },
+    { title: 'AI is making data breaches costlier', time: '4h ago', readers: '1,152 readers' },
+    { title: 'Firms step up festive hiring plans', time: '4h ago', readers: '521 readers' },
+    { title: "Hurun spotlights India's top women ...", time: '2d ago', readers: '980 readers' },
+    { title: 'Global Tech Startups see Q3 investment boost', time: '3d ago', readers: '4,210 readers' },
   ];
 
+  const puzzleItems = [
+    { id: 'werd', name: 'Werd #56', iconBg: '#c28b12', label: 'WE', stat: '3 connections played' },
+    { id: 'zip', name: 'Zip #504', iconBg: '#d94814', label: 'DN', stat: '6 connections played' },
+    { id: 'patches', name: 'Patches #139', iconBg: '#0a66c2', label: 'PA', stat: '4 connections played' },
+    { id: 'sudoku', name: 'Mini Sudoku #357', iconBg: '#137333', label: 'SU', stat: '3 connections played' },
+  ];
+
+  const visibleNews = showMoreNews ? newsItems : newsItems.slice(0, 5);
+
   return (
-    <Card
-      elevation={0}
-      sx={{
-        border: '1px solid #E0E0E0',
-        borderRadius: 2,
-        backgroundColor: '#FFFFFF',
-      }}
-    >
-      <CardContent sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-            LinkedIn News
-          </Typography>
-          <InfoIcon sx={{ fontSize: 16, color: '#666666' }} />
+    <Box className={styles.container}>
+      <Card elevation={0} className={styles.newsCard}>
+        <Box className={styles.cardHeader}>
+          <Typography className={styles.cardTitle}>LinkedIn News</Typography>
+          <InfoIcon className={styles.infoIcon} />
         </Box>
 
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-          Top stories
+        <Typography className={styles.subTitle}>Top stories</Typography>
+
+        <Box className={styles.newsList}>
+          {visibleNews.map((item, idx) => (
+            <Box key={idx} className={styles.newsItem}>
+              <Typography className={styles.storyTitle}>{item.title}</Typography>
+              <Typography className={styles.storyMeta}>
+                {item.time} • {item.readers}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+
+        <Button
+          startIcon={showMoreNews ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          className={styles.showMoreBtn}
+          onClick={() => setShowMoreNews(!showMoreNews)}
+        >
+          {showMoreNews ? 'Show less' : 'Show more news'}
+        </Button>
+      </Card>
+
+      <Card elevation={0} className={styles.puzzleCard}>
+        <Typography className={styles.cardTitle} sx={{ mb: 1.5 }}>
+          Today&apos;s puzzles
         </Typography>
 
-        <List disablePadding>
-          {news.map((item, index) => (
-            <ListItem
-              key={index}
-              disableGutters
-              sx={{ cursor: 'pointer', '&:hover': { backgroundColor: '#F3F2EF' }, borderRadius: 1, p: 0.5 }}
-            >
-              <ListItemText
-                primary={
-                  <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-                    • {item.title}
-                  </Typography>
-                }
-                secondary={
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', pl: 1.5 }}>
-                    {item.time} • {item.readers}
-                  </Typography>
-                }
-              />
-            </ListItem>
+        <Box className={styles.puzzleList}>
+          {puzzleItems.map((p) => (
+            <Box key={p.id} className={styles.puzzleItem}>
+              <Box className={styles.puzzleLeft}>
+                <Box className={styles.puzzleIcon} sx={{ backgroundColor: p.iconBg }}>
+                  {p.label}
+                </Box>
+                <Box>
+                  <Typography className={styles.puzzleTitle}>{p.name}</Typography>
+                  <Typography className={styles.puzzleMeta}>{p.stat}</Typography>
+                </Box>
+              </Box>
+              <ChevronRightIcon sx={{ fontSize: 20, color: '#666666' }} />
+            </Box>
           ))}
-        </List>
-      </CardContent>
-    </Card>
+        </Box>
+
+        <Button
+          startIcon={showMorePuzzles ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          className={styles.showMoreBtn}
+          onClick={() => setShowMorePuzzles(!showMorePuzzles)}
+        >
+          {showMorePuzzles ? 'Show less' : 'Show more'}
+        </Button>
+      </Card>
+    </Box>
   );
 }

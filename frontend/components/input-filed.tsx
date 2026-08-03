@@ -37,6 +37,8 @@ interface InputFieldProps<T extends FieldValues> {
   fullWidth?: boolean;
   size?: 'small' | 'medium';
   className?: string;
+  multiline?: boolean;
+  rows?: number;
 }
 
 export default function InputField<T extends FieldValues>({
@@ -50,6 +52,8 @@ export default function InputField<T extends FieldValues>({
   fullWidth = true,
   size = 'small',
   className,
+  multiline,
+  rows,
 }: InputFieldProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -147,6 +151,8 @@ export default function InputField<T extends FieldValues>({
                 helperText={fieldState.error?.message}
                 size={size}
                 className={className}
+                multiline={multiline}
+                rows={rows}
               />
             );
         }

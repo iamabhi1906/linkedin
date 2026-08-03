@@ -3,17 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import {
-  AppBar,
-  Avatar,
-  Box,
-  Container,
-  InputBase,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import { AppBar, Avatar, Box, Container, InputBase, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import {
   Home as HomeIcon,
   People as PeopleIcon,
@@ -76,7 +66,6 @@ export default function Header() {
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters sx={{ minHeight: 52, justifyContent: 'space-between' }}>
-          {/* Left Logo + Search */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
               <LinkedInLogo width={34} height={34} />
@@ -98,7 +87,6 @@ export default function Header() {
             </Box>
           </Box>
 
-          {/* Right Navigation */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 3 } }}>
             {navItems.map((item) => {
               const active = pathname === item.path;
@@ -134,7 +122,6 @@ export default function Header() {
               );
             })}
 
-            {/* Profile Avatar / Me */}
             <Box
               onClick={handleOpenMenu}
               sx={{
@@ -145,16 +132,10 @@ export default function Header() {
                 paddingTop: 0.5,
               }}
             >
-              <Avatar
-                src={currentUser?.profilePicture || currentUser?.image}
-                sx={{ width: 24, height: 24, fontSize: '0.75rem' }}
-              >
-                {currentUser?.firstName?.[0] || currentUser?.name?.[0] || 'U'}
+              <Avatar src={currentUser?.profilePicture || (session?.user?.image ?? undefined)} sx={{ width: 24, height: 24, fontSize: '0.75rem' }}>
+                {currentUser?.name?.[0] || 'U'}
               </Avatar>
-              <Typography
-                variant="caption"
-                sx={{ fontSize: '0.75rem', color: '#666666', display: { xs: 'none', md: 'block' } }}
-              >
+              <Typography variant="caption" sx={{ fontSize: '0.75rem', color: '#666666', display: { xs: 'none', md: 'block' } }}>
                 Me ▾
               </Typography>
             </Box>
@@ -187,7 +168,6 @@ export default function Header() {
               </MenuItem>
             </Menu>
 
-            {/* Post a Job Link */}
             <Box
               onClick={() => router.push('/jobs/new')}
               sx={{

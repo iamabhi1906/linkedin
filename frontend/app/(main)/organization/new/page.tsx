@@ -1,35 +1,38 @@
 'use client';
 
-import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import {
-  Button,
-  Card,
-  CardContent,
-  Container,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Button, Card, CardContent, Container, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/store';
 import { createOrganizationThunk } from '@/features/organization/organization.slice';
 import { useSnackbar } from 'notistack';
+import { CreateOrgPayload } from '@/features/organization/organization.type';
+import { FormInput } from '@/components/forms/form-input';
 
 export default function CreateOrganizationPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { register, handleSubmit } = useForm();
+  const { handleSubmit, control } = useForm<CreateOrgPayload>({
+    defaultValues: {
+      name: '',
+      tagline: '',
+      about: '',
+      website: '',
+      industry: '',
+      location: '',
+    },
+  });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CreateOrgPayload) => {
     try {
       const org = await dispatch(createOrganizationThunk(data)).unwrap();
       enqueueSnackbar('Organization page created!', { variant: 'success' });
       router.push(`/organization/${org.slug}`);
-    } catch (err: any) {
-      enqueueSnackbar(err || 'Failed to create organization', { variant: 'error' });
+    } catch (err: unknown) {
+      enqueueSnackbar((err as { message?: string }).message || 'Invalid credentials', { variant: 'error' });
     }
   };
 
@@ -42,12 +45,12 @@ export default function CreateOrganizationPage() {
           </Typography>
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            <TextField fullWidth label="Page Name" {...register('name', { required: true })} margin="normal" size="small" />
-            <TextField fullWidth label="Tagline" {...register('tagline')} margin="normal" size="small" />
-            <TextField fullWidth multiline rows={3} label="About" {...register('about')} margin="normal" size="small" />
-            <TextField fullWidth label="Website URL" {...register('website')} margin="normal" size="small" />
-            <TextField fullWidth label="Industry" {...register('industry')} margin="normal" size="small" placeholder="Technology, Software, Finance..." />
-            <TextField fullWidth label="Location" {...register('location')} margin="normal" size="small" />
+            <FormInput fullWidth label="Page Name" name="name" control={control} size="small" />
+            <FormInput fullWidth label="Tagline" name="tagline" control={control} size="small" />
+            <FormInput fullWidth multiline rows={3} label="About" name="about" control={control} size="small" />
+            <FormInput fullWidth label="Website URL" name="website" control={control} size="small" />
+            <FormInput fullWidth label="Industry" name="industry" control={control} size="small" placeholder="Technology, Software, Finance..." />
+            <FormInput fullWidth label="Location" name="location" control={control} size="small" />
 
             <Button type="submit" variant="contained" fullWidth size="large" sx={{ mt: 3, borderRadius: 5, textTransform: 'none', fontWeight: 600 }}>
               Create Page

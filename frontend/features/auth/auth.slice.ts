@@ -1,8 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { loginThunk, signupThunk, logoutThunk } from './auth.action';
+import { fetchMeThunk } from '../user/user.action';
+import { User } from '../user/user.type';
 
 interface AuthState {
-  user: any | null;
+  user: User | null;
   accessToken: string | null;
   loading: boolean;
   error: string | null;
@@ -30,6 +32,9 @@ const authSlice = createSlice({
       state.user = null;
       state.accessToken = null;
       state.isAuthenticated = false;
+      state.error = null;
+    },
+    clearAuthError: (state) => {
       state.error = null;
     },
   },
@@ -67,9 +72,18 @@ const authSlice = createSlice({
         state.user = null;
         state.accessToken = null;
         state.isAuthenticated = false;
+      })
+      .addCase(fetchMeThunk.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+      })
+      .addCase(fetchMeThunk.rejected, (state) => {
+        state.user = null;
+        state.accessToken = null;
+        state.isAuthenticated = false;
       });
   },
 });
 
-export const { setAuth, clearAuth } = authSlice.actions;
+export const { setAuth, clearAuth, clearAuthError } = authSlice.actions;
 export default authSlice.reducer;

@@ -22,7 +22,7 @@ export const userService = {
 
   async updateProfile(payload: UpdateProfilePayload) {
     const response = await apiClient.patch('/users/me', payload);
-    return response.data;
+    return response.data.user;
   },
 
   async uploadProfilePicture(file: File) {

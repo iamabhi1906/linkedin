@@ -6,8 +6,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job } from '../entities/job.entity';
-import { OrganizationMember } from '../../organizations/entities/organization-member.entity';
-import { OrganizationRole } from '../../organizations/enums/organization-role.enum';
+import { OrganizationMember } from '../../organization-members/entities/organization-member.entity';
+import { OrganizationRole } from '../../organization-members/enums/organization-role.enum';
 
 @Injectable()
 export class DeleteJobService {

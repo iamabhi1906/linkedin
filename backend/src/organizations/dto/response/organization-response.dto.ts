@@ -1,49 +1,33 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { OrganizationType } from '../../enums/organization-type.enum';
 
 export class OrganizationResponseDto {
-  @ApiProperty()
-  id: string;
+  id!: string;
 
-  @ApiProperty()
-  name: string;
+  name!: string;
 
-  @ApiProperty()
-  slug: string;
+  slug!: string;
 
-  @ApiPropertyOptional()
   tagline?: string;
 
-  @ApiPropertyOptional()
   about?: string;
 
-  @ApiPropertyOptional()
   website?: string;
 
-  @ApiPropertyOptional()
   industry?: string;
 
-  @ApiProperty({ enum: OrganizationType })
-  organizationType: OrganizationType;
+  organizationType!: OrganizationType;
 
-  @ApiPropertyOptional()
   logo?: string;
 
-  @ApiPropertyOptional()
   cover?: string;
 
-  @ApiPropertyOptional()
   location?: string;
 
-  @ApiPropertyOptional()
   employeeCountRange?: string;
 
-  @ApiProperty()
-  ownerId: string;
+  ownerId!: string;
 
-  @ApiProperty()
-  createdAt: Date;
+  createdAt!: Date;
 
-  @ApiProperty()
-  updatedAt: Date;
+  updatedAt!: Date;
 }
