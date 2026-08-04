@@ -22,16 +22,14 @@ export class FeedService {
     userId?: string,
   ): Promise<{ posts: FeedPostResult[]; total: number }> {
     const skip = (page - 1) * limit;
-    let allowedAuthorIds: string[] = [];
+    let allowedAuthorIds: string[] = userId ? [userId] : [];
     if (userId) {
       const follows = await this.followRepository.find({
         where: { followerId: userId, status: FollowStatus.ACCEPTED },
         select: { followingId: true },
       });
       const followingIds = follows.map((f) => f.followingId);
-      if (followingIds.length > 0) {
-        allowedAuthorIds = [userId, ...followingIds];
-      }
+      allowedAuthorIds = [userId, ...followingIds];
     }
     const queryBuilder = this.postRepository
       .createQueryBuilder('post')
@@ -43,17 +41,19 @@ export class FeedService {
       .leftJoinAndSelect('originalPost.author', 'origAuthor')
       .leftJoinAndSelect('originalPost.organization', 'origOrg')
       .leftJoinAndSelect('originalPost.media', 'origMedia')
-      .leftJoinAndSelect('originalPost.likes', 'origLikes')
-      .where('post.visibility = :visibility', {
-        visibility: PostVisibility.PUBLIC,
-      });
+      .leftJoinAndSelect('originalPost.likes', 'origLikes');
 
-    if (allowedAuthorIds.length > 0) {
-      queryBuilder.andWhere(
-        '(post.authorId IN (:...allowedAuthorIds) OR originalPost.authorId IN (:...allowedAuthorIds))',
-        { allowedAuthorIds },
+    if (userId && allowedAuthorIds.length > 0) {
+      queryBuilder.where(
+        '(post.visibility = :publicVisibility OR post.authorId IN (:...allowedAuthorIds) OR originalPost.authorId IN (:...allowedAuthorIds))',
+        { publicVisibility: PostVisibility.PUBLIC, allowedAuthorIds },
       );
+    } else {
+      queryBuilder.where('post.visibility = :publicVisibility', {
+        publicVisibility: PostVisibility.PUBLIC,
+      });
     }
+
     queryBuilder.orderBy('post.createdAt', 'DESC').skip(skip).take(limit);
     const [posts, total] = await queryBuilder.getManyAndCount();
     let userRepostedOriginalIds = new Set<string>();
@@ -97,6 +97,8 @@ export class FeedService {
         ...rest,
         isLiked,
         userReaction,
+        likeReaction: userReaction,
+        userLike: userLike || null,
         reactionCounts,
         isReposted,
       };

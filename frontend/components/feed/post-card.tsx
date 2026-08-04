@@ -3,10 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Avatar, Box, Card, CardContent, Divider, Typography } from '@mui/material';
 import { Repeat as RepeatIcon } from '@mui/icons-material';
-import { postService } from '@/services/posts/post.service';
-import { useSnackbar } from 'notistack';
 import { Post } from '@/features/post/post.type';
-import { type Comment } from '@/features/comment/comment.type';
 import PostMediaCarousel from './post-media-carousel';
 import CommentSection from '../comments/comment-section';
 import { PostHeader } from './post-header';
@@ -16,17 +13,13 @@ import { RepostModal } from './repost-modal';
 import styles from './post-card.module.css';
 
 export default function PostCard({ post }: { post: Post }) {
-  console.log(post);
-  const { enqueueSnackbar } = useSnackbar();
   const [liked, setLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likesCount || 0);
   const [selectedReaction, setSelectedReaction] = useState<string>('like');
   const [isReposted, setIsReposted] = useState(post.isReposted || false);
   const [repostsCount, setRepostsCount] = useState(post.repostsCount || 0);
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
   const [commentsCount, setCommentsCount] = useState(post.commentsCount || 0);
-
   const [repostDialogOpen, setRepostDialogOpen] = useState(false);
 
   const targetPost = post.originalPost || post;
@@ -34,31 +27,16 @@ export default function PostCard({ post }: { post: Post }) {
   const authorAvatar =
     (typeof targetPost.organization?.logo === 'string' ? targetPost.organization.logo : undefined) ||
     (typeof targetPost.author?.profilePicture === 'string' ? targetPost.author.profilePicture : undefined);
-
   const reposterName = post.author?.name || 'A connection';
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLiked(post.isLiked || false);
     setLikesCount(post.likesCount || 0);
-    if (post.likeReaction) {
-      setSelectedReaction(post.likeReaction);
-    }
+    const activeReaction = post.likeReaction || post.userReaction || post.userLike?.reaction || 'like';
+    setSelectedReaction(activeReaction);
     setIsReposted(post.isReposted || false);
     setRepostsCount(post.repostsCount || 0);
-  }, [post.isLiked, post.likesCount, post.likeReaction, post.isReposted, post.repostsCount]);
-
-  const handleToggleComments = async () => {
-    setShowComments(!showComments);
-    if (!showComments && comments.length === 0) {
-      try {
-        const res = await postService.getComments(post.id);
-        setComments(res.comments || []);
-      } catch {
-        enqueueSnackbar('Failed to fetch comments', { variant: 'error' });
-      }
-    }
-  };
+  }, [post.isLiked, post.likesCount, post.likeReaction, post.userReaction, post.userLike, post.isReposted, post.repostsCount]);
 
   return (
     <Card elevation={0} className={styles.postCard}>
@@ -93,21 +71,17 @@ export default function PostCard({ post }: { post: Post }) {
                 </Box>
               </Box>
             </Box>
-
             <Typography variant="body2" className={styles.postContent}>
               {targetPost.content}
             </Typography>
-
             <PostMediaCarousel media={targetPost.media} />
           </Box>
         ) : (
           <>
             <PostHeader post={post} />
-
             <Typography variant="body2" className={styles.postContent}>
               {post.content}
             </Typography>
-
             <PostMediaCarousel media={post.media} />
           </>
         )}
@@ -119,7 +93,7 @@ export default function PostCard({ post }: { post: Post }) {
           repostsCount={repostsCount}
           commentsCount={commentsCount}
           reactionCounts={post.reactionCounts}
-          onToggleComments={handleToggleComments}
+          onToggleComments={() => setShowComments((prev) => !prev)}
         />
 
         <Divider />
@@ -138,7 +112,7 @@ export default function PostCard({ post }: { post: Post }) {
             setIsReposted(newReposted);
             setRepostsCount((prev) => Math.max(0, prev + countChange));
           }}
-          onToggleComments={handleToggleComments}
+          onToggleComments={() => setShowComments((prev) => !prev)}
           onOpenRepostDialog={() => setRepostDialogOpen(true)}
         />
 
@@ -152,7 +126,13 @@ export default function PostCard({ post }: { post: Post }) {
           }}
         />
 
-        {showComments && <CommentSection postId={post.id} comments={comments} onCommentAdded={() => setCommentsCount((prev) => prev + 1)} />}
+        {showComments && (
+          <CommentSection
+            postId={post.id}
+            postAuthorId={post.authorId}
+            onCommentAdded={() => setCommentsCount((prev) => prev + 1)}
+          />
+        )}
       </CardContent>
     </Card>
   );

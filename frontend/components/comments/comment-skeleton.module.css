@@ -1,0 +1,43 @@
+.skeletonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.skeletonItem {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.skeletonAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.skeletonBody {
+  flex: 1;
+  background-color: #f2f4f7;
+  border-radius: 0 12px 12px 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeletonLineShort {
+  width: 30%;
+  height: 14px;
+}
+
+.skeletonLineMedium {
+  width: 55%;
+  height: 12px;
+}
+
+.skeletonLineFull {
+  width: 90%;
+  height: 14px;
+}

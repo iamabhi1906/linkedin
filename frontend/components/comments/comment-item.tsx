@@ -1,104 +1,128 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Avatar, Box, Button, TextField, Typography } from '@mui/material';
-import styles from './comment-item.module.css';
+import { Avatar, Box, Typography } from '@mui/material';
 import { Comment } from '@/features/comment/comment.type';
-import { postService } from '@/services/posts/post.service';
+import { CommentActions } from './comment-actions';
+import { CommentInput } from './comment-input';
+import { useAppDispatch } from '@/app/store';
+import { toggleCommentLikeThunk, addCommentThunk } from '@/features/comment/comment.action';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/app/store';
 import { useSnackbar } from 'notistack';
+import styles from './comment-item.module.css';
 
 interface CommentItemProps {
   comment: Comment;
   postId: string;
-  onCommentAdded?: () => void;
+  postAuthorId?: string;
 }
 
-export default function CommentItem({ comment, postId, onCommentAdded }: CommentItemProps) {
+export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, postAuthorId }) => {
+  const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
+  const { profile } = useSelector((state: RootState) => state.user);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const currentUser = profile || user;
+
   const [showReplyForm, setShowReplyForm] = useState(false);
-  const [replyText, setReplyText] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [children, setChildren] = useState<Comment[]>(comment.children || []);
 
-  const handleToggleReply = () => {
-    setShowReplyForm((prev) => !prev);
-  };
-
-  const handleAddReply = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!replyText.trim()) return;
-
-    setSubmitting(true);
-    try {
-      const res = await postService.addComment(postId, replyText.trim(), comment.id);
-      if (res.comment) {
-        setChildren((prev) => [...prev, res.comment]);
-      }
-      setReplyText('');
-      setShowReplyForm(false);
-      enqueueSnackbar('Reply posted!', { variant: 'success' });
-      if (onCommentAdded) {
-        onCommentAdded();
-      }
-    } catch {
-      enqueueSnackbar('Failed to post reply', { variant: 'error' });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
+  const isPostAuthor = postAuthorId ? comment.authorId === postAuthorId : false;
   const authorName = comment.author?.name || 'LinkedIn User';
   const authorAvatar = comment.author?.profilePicture || undefined;
 
+  const handleToggleLike = async (reactionOverride?: string) => {
+    try {
+      await dispatch(
+        toggleCommentLikeThunk({
+          postId,
+          commentId: comment.id,
+          reaction: reactionOverride || comment.selectedReaction || 'like',
+        }),
+      ).unwrap();
+    } catch {
+      enqueueSnackbar('Failed to like comment', { variant: 'error' });
+    }
+  };
+
+  const handleAddReply = async (content: string, mediaUrl?: string) => {
+    try {
+      await dispatch(
+        addCommentThunk({
+          postId,
+          content,
+          parentId: comment.id,
+          mediaUrl,
+        }),
+      ).unwrap();
+      setShowReplyForm(false);
+      enqueueSnackbar('Reply posted!', { variant: 'success' });
+    } catch {
+      enqueueSnackbar('Failed to post reply', { variant: 'error' });
+    }
+  };
+
   return (
-    <Box className={styles.commentContainer}>
+    <Box className={styles.commentItemContainer}>
       <Avatar src={authorAvatar} className={styles.avatar}>
         {authorName[0] || 'U'}
       </Avatar>
 
-      <Box className={styles.commentBody}>
+      <Box className={styles.contentWrapper}>
         <Box className={styles.commentBubble}>
           <Box className={styles.headerRow}>
-            <Typography component="span" className={styles.authorName}>
-              {authorName}
+            <Box className={styles.authorInfoLeft}>
+              <Typography component="span" className={styles.authorName}>
+                {authorName}
+              </Typography>
+              {isPostAuthor && <span className={styles.authorBadge}>Author</span>}
+            </Box>
+            <Typography component="span" className={styles.timeText}>
+              {comment.createdAt ? 'Recently' : ''}
             </Typography>
           </Box>
 
-          {comment.author?.headline && <Typography className={styles.headlineText}>{comment.author.headline}</Typography>}
+          {comment.author?.headline && (
+            <Typography className={styles.headlineText}>{comment.author.headline}</Typography>
+          )}
 
-          <Typography className={styles.contentText}>{comment.content}</Typography>
+          {comment.content && <Typography className={styles.contentText}>{comment.content}</Typography>}
+
+          {comment.mediaUrl && (
+            <img src={comment.mediaUrl} alt="comment attachment" className={styles.commentMedia} />
+          )}
         </Box>
 
-        <Box className={styles.actionRow}>
-          <Button size="small" className={styles.actionButton} onClick={handleToggleReply}>
-            Reply
-          </Button>
-        </Box>
+        <CommentActions
+          liked={!!comment.liked}
+          likesCount={comment.likesCount || 0}
+          selectedReaction={comment.selectedReaction}
+          onToggleLike={handleToggleLike}
+          onToggleReply={() => setShowReplyForm((prev) => !prev)}
+        />
 
         {showReplyForm && (
-          <Box component="form" className={styles.replyForm} onSubmit={handleAddReply}>
-            <TextField
-              size="small"
-              className={styles.replyInput}
+          <Box className={styles.replyInputWrapper}>
+            <CommentInput
+              userAvatar={currentUser?.profilePicture || undefined}
+              userName={currentUser?.name || 'U'}
               placeholder={`Reply to ${authorName}...`}
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              autoFocus
+              onSubmit={handleAddReply}
+              buttonText="Reply"
             />
-            <Button type="submit" variant="contained" size="small" className={styles.replySubmitBtn} disabled={!replyText.trim() || submitting}>
-              {submitting ? '...' : 'Reply'}
-            </Button>
           </Box>
         )}
 
-        {children.length > 0 && (
+        {comment.children && comment.children.length > 0 && (
           <Box className={styles.nestedContainer}>
-            {children.map((child) => (
-              <CommentItem key={child.id} comment={child} postId={postId} onCommentAdded={onCommentAdded} />
+            {comment.children.map((child) => (
+              <CommentItem key={child.id} comment={child} postId={postId} postAuthorId={postAuthorId} />
             ))}
           </Box>
         )}
       </Box>
     </Box>
   );
-}
+};
+
+export default CommentItem;

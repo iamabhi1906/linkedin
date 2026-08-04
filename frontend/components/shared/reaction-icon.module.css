@@ -1,0 +1,34 @@
+.likeIcon {
+  color: #0a66c2;
+  font-size: 18px;
+}
+
+.loveIcon {
+  color: #e0245e;
+  font-size: 18px;
+}
+
+.celebrateIcon {
+  color: #4caf50;
+  font-size: 18px;
+}
+
+.supportIcon {
+  color: #7b1fa2;
+  font-size: 18px;
+}
+
+.insightfulIcon {
+  color: #f57c00;
+  font-size: 18px;
+}
+
+.funnyIcon {
+  color: #fbc02d;
+  font-size: 18px;
+}
+
+.defaultIcon {
+  color: #666666;
+  font-size: 18px;
+}

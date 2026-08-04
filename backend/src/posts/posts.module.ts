@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { PostMedia } from '../post-media/entities/post-media.entity';
-import { PostLike } from '../post-likes/entities/post-like.entity';
+import { Like } from '../likes/entities/like.entity';
 import { PostComment } from '../post-comments/entities/post-comment.entity';
 import { Follow } from '../follows/entities/follow.entity';
 import { CreatePostService } from './services/create-post.service';
@@ -17,15 +17,17 @@ import { TokenModule } from '../token/token.module';
 import { PostMediaModule } from '../post-media/post-media.module';
 import { PostLikesModule } from '../post-likes/post-likes.module';
 import { PostCommentsModule } from '../post-comments/post-comments.module';
+import { LikesModule } from '../likes/likes.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Post, PostMedia, PostLike, PostComment, Follow]),
+    TypeOrmModule.forFeature([Post, PostMedia, Like, PostComment, Follow]),
     UploadsModule,
     TokenModule,
     PostMediaModule,
     PostLikesModule,
     PostCommentsModule,
+    LikesModule,
   ],
   controllers: [PostController],
   providers: [

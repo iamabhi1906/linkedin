@@ -1,0 +1,91 @@
+.inputWrapper {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.inputCard {
+  flex: 1;
+  border: 1px solid #dcdcdc;
+  border-radius: 18px;
+  background-color: #ffffff;
+  padding: 6px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.textField {
+  width: 100%;
+}
+
+.textField :global(.MuiOutlinedInput-notchedOutline) {
+  border: none;
+}
+
+.textField :global(.MuiInputBase-input) {
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+.mediaPreviewContainer {
+  position: relative;
+  display: inline-block;
+  max-width: 120px;
+  margin-top: 4px;
+}
+
+.mediaPreview {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  max-height: 100px;
+}
+
+.removeMediaBtn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  padding: 2px;
+}
+
+.inputActionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.iconButtonsGroup {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.iconBtn {
+  color: #666666;
+  padding: 4px;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+.submitBtn {
+  text-transform: none;
+  font-weight: 600;
+  border-radius: 16px;
+  padding: 2px 14px;
+  font-size: 13px;
+}

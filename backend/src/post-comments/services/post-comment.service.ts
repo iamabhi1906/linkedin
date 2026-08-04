@@ -42,13 +42,18 @@ export class PostCommentService {
       authorId,
       parentId: dto.parentId,
       content: dto.content,
+      mediaUrl: dto.mediaUrl,
     });
     const savedComment = await this.commentRepository.save(comment);
 
     post.commentsCount += 1;
     await this.postRepository.save(post);
 
-    return savedComment;
+    const fullComment = await this.commentRepository.findOne({
+      where: { id: savedComment.id },
+      relations: { author: true },
+    });
+    return fullComment || savedComment;
   }
 
   async deleteComment(
@@ -79,11 +84,28 @@ export class PostCommentService {
     }
   }
 
-  async getComments(postId: string): Promise<PostComment[]> {
-    return await this.commentRepository.find({
+  async getComments(postId: string, userId?: string): Promise<any[]> {
+    const comments = await this.commentRepository.find({
       where: { postId, parentId: IsNull() },
-      relations: { author: true, children: { author: true } },
+      relations: {
+        author: true,
+        likes: true,
+        children: { author: true, likes: true },
+      },
       order: { createdAt: 'ASC' },
     });
+
+    const formatComment = (c: PostComment) => {
+      const userLike = userId && c.likes ? c.likes.find((l) => l.userId === userId) : null;
+      return {
+        ...c,
+        liked: !!userLike,
+        selectedReaction: userLike?.reaction || 'like',
+        userLike: userLike || null,
+        children: c.children ? c.children.map(formatComment) : [],
+      };
+    };
+
+    return comments.map(formatComment);
   }
 }

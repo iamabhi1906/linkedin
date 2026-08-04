@@ -38,8 +38,22 @@ export const postService = {
     return response.data;
   },
 
-  async addComment(postId: string, content: string, parentId?: string) {
-    const response = await apiClient.post(`/posts/${postId}/comments`, { content, parentId });
+  async addComment(postId: string, content: string, parentId?: string, mediaUrl?: string) {
+    const response = await apiClient.post(`/posts/${postId}/comments`, { content, parentId, mediaUrl });
+    return response.data;
+  },
+
+  async toggleCommentLike(postId: string, commentId: string, reaction?: string) {
+    const response = await apiClient.post(`/posts/${postId}/comments/${commentId}/likes`, { reaction });
+    return response.data;
+  },
+
+  async uploadMedia(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post('/uploads/single', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
   },
 

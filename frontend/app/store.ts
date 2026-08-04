@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage';
 import authReducer from '@/features/auth/auth.slice';
 import userReducer from '@/features/user/user.slice';
 import postReducer from '@/features/post/post.slice';
+import commentReducer from '@/features/comment/comment.slice';
 import organizationReducer from '@/features/organization/organization.slice';
 import jobReducer from '@/features/job/job.slice';
 import messagingReducer from '@/features/messaging/messaging.slice';
@@ -24,6 +25,7 @@ const store = configureStore({
     auth: persistedAuthReducer,
     user: userReducer,
     post: postReducer,
+    comment: commentReducer,
     organization: organizationReducer,
     job: jobReducer,
     messaging: messagingReducer,

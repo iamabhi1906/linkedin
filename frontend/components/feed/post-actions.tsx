@@ -10,7 +10,8 @@ import {
   SendOutlined as SendIcon,
   Create as CreateIcon,
 } from '@mui/icons-material';
-import { FacebookSelector } from '@charkour/react-reactions';
+import { ReactionPicker } from '../shared/reaction-picker';
+import { ReactionIcon } from '../shared/reaction-icon';
 import { useAppDispatch } from '@/app/store';
 import { toggleLikeThunk, repostThunk } from '@/features/post/post.action';
 import { useSnackbar } from 'notistack';
@@ -60,16 +61,8 @@ export const PostActions: React.FC<PostActionsProps> = ({
     }
   };
 
-  const handleOpenRepostMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setRepostMenuAnchor(event.currentTarget);
-  };
-
-  const handleCloseRepostMenu = () => {
-    setRepostMenuAnchor(null);
-  };
-
   const handleInstantRepost = async () => {
-    handleCloseRepostMenu();
+    setRepostMenuAnchor(null);
     try {
       const res = await dispatch(repostThunk({ postId })).unwrap();
       onRepostedChange(res.isReposted, res.isReposted ? 1 : -1);
@@ -84,35 +77,21 @@ export const PostActions: React.FC<PostActionsProps> = ({
   return (
     <Box className={styles.actionButtonsRow}>
       <Box
+        className={styles.reactionWrapper}
         onMouseEnter={() => setShowReactionSelector(true)}
         onMouseLeave={() => setShowReactionSelector(false)}
-        sx={{ position: 'relative', display: 'inline-block' }}
       >
         {showReactionSelector && (
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: '100%',
-              left: 20,
-              mb: 0,
-              zIndex: 100,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-              borderRadius: 4,
-              backgroundColor: '#ffffff',
-              p: 0.5,
+          <ReactionPicker
+            onSelect={async (label) => {
+              onReactionChange(label);
+              setShowReactionSelector(false);
+              await handleToggleLike(label);
             }}
-          >
-            <FacebookSelector
-              onSelect={async (label) => {
-                onReactionChange(label);
-                setShowReactionSelector(false);
-                await handleToggleLike(label);
-              }}
-            />
-          </Box>
+          />
         )}
         <Button
-          startIcon={liked ? <LikedIcon className={styles.likedIcon} /> : <LikeIcon />}
+          startIcon={<ReactionIcon reaction={selectedReaction} liked={liked} />}
           onClick={() => handleToggleLike()}
           className={liked ? styles.likedButton : styles.postButtons}
         >
@@ -126,7 +105,7 @@ export const PostActions: React.FC<PostActionsProps> = ({
 
       <Button
         startIcon={<RepeatIcon className={isReposted ? styles.repostedIcon : undefined} />}
-        onClick={handleOpenRepostMenu}
+        onClick={(e) => setRepostMenuAnchor(e.currentTarget)}
         className={isReposted ? styles.repostedButton : styles.postButtons}
       >
         Repost
@@ -136,11 +115,11 @@ export const PostActions: React.FC<PostActionsProps> = ({
         Send
       </Button>
 
-      <Menu anchorEl={repostMenuAnchor} open={Boolean(repostMenuAnchor)} onClose={handleCloseRepostMenu}>
-        <MenuItem onClick={handleInstantRepost} sx={{ py: 1.5, px: 2, gap: 1.5 }}>
+      <Menu anchorEl={repostMenuAnchor} open={Boolean(repostMenuAnchor)} onClose={() => setRepostMenuAnchor(null)}>
+        <MenuItem onClick={handleInstantRepost} className={styles.menuItem}>
           <RepeatIcon fontSize="small" color={isReposted ? 'success' : 'action'} />
           <Box>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+            <Typography variant="subtitle2" className={styles.menuTitle}>
               {isReposted ? 'Undo Repost' : 'Repost'}
             </Typography>
             <Typography variant="caption" color="text.secondary">
@@ -150,14 +129,14 @@ export const PostActions: React.FC<PostActionsProps> = ({
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleCloseRepostMenu();
+            setRepostMenuAnchor(null);
             onOpenRepostDialog();
           }}
-          sx={{ py: 1.5, px: 2, gap: 1.5 }}
+          className={styles.menuItem}
         >
           <CreateIcon fontSize="small" color="action" />
           <Box>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+            <Typography variant="subtitle2" className={styles.menuTitle}>
               Repost with your thoughts
             </Typography>
             <Typography variant="caption" color="text.secondary">

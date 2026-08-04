@@ -1,57 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Post } from '../../posts/entities/post.entity';
-import { PostLike } from '../entities/post-like.entity';
+import { Injectable } from '@nestjs/common';
+import { LikeService } from '../../likes/services/like.service';
 
 @Injectable()
 export class PostLikeService {
-  constructor(
-    @InjectRepository(Post)
-    private readonly postRepository: Repository<Post>,
-    @InjectRepository(PostLike)
-    private readonly likeRepository: Repository<PostLike>,
-  ) {}
+  constructor(private readonly likeService: LikeService) {}
 
-  async toggleLike(
-    postId: string,
-    userId: string,
-    reaction = 'like',
-  ): Promise<{ liked: boolean; likesCount: number; reaction?: string }> {
-    const post = await this.postRepository.findOne({ where: { id: postId } });
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
-    const existingLike = await this.likeRepository.findOne({
-      where: { postId, userId },
-    });
-
-    if (existingLike) {
-      if (reaction && existingLike.reaction !== reaction) {
-        existingLike.reaction = reaction;
-        await this.likeRepository.save(existingLike);
-        return { liked: true, likesCount: post.likesCount, reaction: existingLike.reaction };
-      } else {
-        await this.likeRepository.remove(existingLike);
-        post.likesCount = Math.max(0, post.likesCount - 1);
-        await this.postRepository.save(post);
-        return { liked: false, likesCount: post.likesCount, reaction: undefined };
-      }
-    } else {
-      const like = this.likeRepository.create({ postId, userId, reaction });
-      await this.likeRepository.save(like);
-      post.likesCount += 1;
-      await this.postRepository.save(post);
-      return { liked: true, likesCount: post.likesCount, reaction: like.reaction };
-    }
+  async toggleLike(postId: string, userId: string, reaction = 'like') {
+    return this.likeService.togglePostLike(postId, userId, reaction);
   }
 
-  async getLikes(postId: string): Promise<PostLike[]> {
-    return await this.likeRepository.find({
-      where: { postId },
-      relations: { user: true },
-      order: { createdAt: 'DESC' },
-    });
+  async toggleCommentLike(commentId: string, userId: string, reaction = 'like') {
+    return this.likeService.toggleCommentLike(commentId, userId, reaction);
+  }
+
+  async getLikes(postId: string) {
+    return this.likeService.getPostLikes(postId);
+  }
+
+  async getCommentLikes(commentId: string) {
+    return this.likeService.getCommentLikes(commentId);
   }
 }

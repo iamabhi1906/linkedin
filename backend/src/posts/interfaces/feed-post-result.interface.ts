@@ -18,6 +18,8 @@ export interface FeedPostResult {
   updatedAt: Date;
   isLiked: boolean;
   userReaction: string | null;
+  likeReaction?: string | null;
+  userLike?: any;
   reactionCounts: {
     reaction: string;
     count: number;

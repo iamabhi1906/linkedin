@@ -1,0 +1,13 @@
+.pickerContainer {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 4px;
+  z-index: 200;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  background-color: #ffffff;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}

@@ -1,82 +1,93 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Avatar, Box, Button, TextField } from '@mui/material';
-import styles from './comment-section.module.css';
-import { Comment } from '@/features/comment/comment.type';
-import CommentItem from './comment-item';
-import { postService } from '@/services/posts/post.service';
+import React, { useEffect } from 'react';
+import { Box, Typography } from '@mui/material';
+import { useAppDispatch } from '@/app/store';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
+import {
+  fetchCommentsThunk,
+  addCommentThunk,
+} from '@/features/comment/comment.action';
+import {
+  selectCommentsForPost,
+  selectCommentsLoading,
+} from '@/features/comment/comment.slice';
+import { CommentInput } from './comment-input';
+import { CommentItem } from './comment-item';
+import { CommentSkeleton } from './comment-skeleton';
 import { useSnackbar } from 'notistack';
+import styles from './comment-section.module.css';
 
 interface CommentSectionProps {
   postId: string;
-  comments: Comment[];
+  postAuthorId?: string;
   onCommentAdded?: () => void;
 }
 
-export default function CommentSection({ postId, comments, onCommentAdded }: CommentSectionProps) {
+export const CommentSection: React.FC<CommentSectionProps> = ({
+  postId,
+  postAuthorId,
+  onCommentAdded,
+}) => {
+  const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
+
+  const comments = useSelector((state: RootState) => selectCommentsForPost(state, postId));
+  const loading = useSelector((state: RootState) => selectCommentsLoading(state, postId));
+
   const { profile } = useSelector((state: RootState) => state.user);
   const { user } = useSelector((state: RootState) => state.auth);
   const currentUser = profile || user;
 
-  const [commentList, setCommentList] = useState<Comment[]>(() => comments || []);
-  const [commentText, setCommentText] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  useEffect(() => {
+    dispatch(fetchCommentsThunk(postId));
+  }, [dispatch, postId]);
 
-  const handleAddRootComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!commentText.trim()) return;
-
-    setSubmitting(true);
+  const handleAddRootComment = async (content: string, mediaUrl?: string) => {
     try {
-      const res = await postService.addComment(postId, commentText.trim());
-      if (res.comment) {
-        setCommentList((prev) => [res.comment, ...prev]);
-      }
-      setCommentText('');
-      enqueueSnackbar('Comment added!', { variant: 'success' });
+      await dispatch(addCommentThunk({ postId, content, mediaUrl })).unwrap();
+      enqueueSnackbar('Comment posted!', { variant: 'success' });
       if (onCommentAdded) {
         onCommentAdded();
       }
     } catch {
-      enqueueSnackbar('Failed to add comment', { variant: 'error' });
-    } finally {
-      setSubmitting(false);
+      enqueueSnackbar('Failed to post comment', { variant: 'error' });
     }
   };
 
-  const userAvatar = currentUser?.profilePicture || undefined;
-  const userName = currentUser?.name || 'U';
-
   return (
     <Box className={styles.commentSection}>
-      <Box className={styles.mainInputRow}>
-        <Avatar src={userAvatar} className={styles.currentUserAvatar}>
-          {userName[0] || 'U'}
-        </Avatar>
+      <CommentInput
+        userAvatar={currentUser?.profilePicture || undefined}
+        userName={currentUser?.name || 'U'}
+        placeholder="Add a comment..."
+        onSubmit={handleAddRootComment}
+        buttonText="Comment"
+      />
 
-        <Box component="form" className={styles.commentForm} onSubmit={handleAddRootComment}>
-          <TextField
-            size="small"
-            className={styles.mainInput}
-            placeholder="Add a comment..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-          />
-          <Button type="submit" variant="contained" className={styles.postButton} disabled={!commentText.trim() || submitting}>
-            {submitting ? '...' : 'Post'}
-          </Button>
+      {loading && comments.length === 0 ? (
+        <CommentSkeleton />
+      ) : (
+        <Box className={styles.commentsList}>
+          {comments.length > 0 ? (
+            comments.map((comment) => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                postId={postId}
+                postAuthorId={postAuthorId}
+              />
+            ))
+          ) : (
+            <Typography className={styles.emptyStateText}>
+              No comments yet. Be the first to comment!
+            </Typography>
+          )}
         </Box>
-      </Box>
-
-      <Box className={styles.commentsList}>
-        {commentList.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} postId={postId} onCommentAdded={onCommentAdded} />
-        ))}
-      </Box>
+      )}
     </Box>
   );
-}
+};
+
+export default CommentSection;

@@ -14,7 +14,7 @@ import { User } from '../../users/entities/user.entity';
 import { Organization } from '../../organizations/entities/organization.entity';
 import { PostVisibility } from '../enums/post-visibility.enum';
 import { PostMedia } from '../../post-media/entities/post-media.entity';
-import { PostLike } from '../../post-likes/entities/post-like.entity';
+import { Like } from '../../likes/entities/like.entity';
 import { PostComment } from '../../post-comments/entities/post-comment.entity';
 
 @Entity('posts')
@@ -65,8 +65,8 @@ export class Post {
   @OneToMany(() => PostMedia, (media) => media.post, { cascade: true })
   media!: PostMedia[];
 
-  @OneToMany(() => PostLike, (like) => like.post)
-  likes!: PostLike[];
+  @OneToMany(() => Like, (like) => like.post)
+  likes!: Like[];
 
   @OneToMany(() => PostComment, (comment) => comment.post)
   comments!: PostComment[];

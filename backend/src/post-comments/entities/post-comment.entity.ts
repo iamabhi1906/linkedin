@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Post } from '../../posts/entities/post.entity';
 import { User } from '../../users/entities/user.entity';
+import { Like } from '../../likes/entities/like.entity';
 
 @Entity('post_comments')
 export class PostComment {
@@ -46,6 +47,15 @@ export class PostComment {
 
   @Column({ type: 'text' })
   content: string;
+
+  @Column({ type: 'text', nullable: true })
+  mediaUrl?: string;
+
+  @Column({ type: 'int', default: 0 })
+  likesCount!: number;
+
+  @OneToMany(() => Like, (like) => like.comment)
+  likes?: Like[];
 
   @CreateDateColumn()
   createdAt: Date;

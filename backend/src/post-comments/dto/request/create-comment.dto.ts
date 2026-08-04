@@ -8,4 +8,8 @@ export class CreateCommentDto {
   @IsOptional()
   @IsUUID()
   parentId?: string;
+
+  @IsOptional()
+  @IsString()
+  mediaUrl?: string;
 }

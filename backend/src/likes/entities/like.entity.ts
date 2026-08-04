@@ -16,10 +16,10 @@ export enum LikeTargetType {
   COMMENT = 'COMMENT',
 }
 
-@Entity('post_likes')
+@Entity('likes')
 @Index(['postId', 'userId', 'targetType'])
 @Index(['commentId', 'userId', 'targetType'])
-export class PostLike {
+export class Like {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -29,14 +29,14 @@ export class PostLike {
   @Column({ type: 'uuid', nullable: true })
   postId?: string;
 
-  @ManyToOne(() => Post, (post) => post.likes, { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne(() => Post, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'postId' })
   post?: Post;
 
   @Column({ type: 'uuid', nullable: true })
   commentId?: string;
 
-  @ManyToOne(() => PostComment, (comment) => comment.likes, { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne(() => PostComment, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'commentId' })
   comment?: PostComment;
 

@@ -18,6 +18,7 @@ import { PostsModule } from './posts/posts.module';
 import { PostMediaModule } from './post-media/post-media.module';
 import { PostLikesModule } from './post-likes/post-likes.module';
 import { PostCommentsModule } from './post-comments/post-comments.module';
+import { LikesModule } from './likes/likes.module';
 import { JobsModule } from './jobs/jobs.module';
 import { JobApplicationsModule } from './job-applications/job-applications.module';
 import { FollowsModule } from './follows/follows.module';
@@ -44,6 +45,7 @@ import { ChatModule } from './chat/chat.module';
     PostMediaModule,
     PostLikesModule,
     PostCommentsModule,
+    LikesModule,
     JobsModule,
     JobApplicationsModule,
     FollowsModule,
@@ -54,4 +56,5 @@ import { ChatModule } from './chat/chat.module';
   providers: [AppService],
 })
 export class AppModule {}
+
 
