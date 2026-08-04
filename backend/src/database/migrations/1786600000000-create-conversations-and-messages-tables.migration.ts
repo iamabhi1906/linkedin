@@ -1,49 +1,171 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateConversationsAndMessagesTables1786600000000
-  implements MigrationInterface {
+export class CreateConversationsAndMessagesTables1786600000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
-      CREATE TABLE IF NOT EXISTS "conversations" (
-        "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-        "type" varchar NOT NULL DEFAULT 'DIRECT',
-        "createdAt" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "updatedAt" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
+    // Conversations
+    await queryRunner.createTable(
+      new Table({
+        name: 'conversations',
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
+          {
+            name: 'type',
+            type: 'varchar',
+            isNullable: false,
+            default: "'DIRECT'",
+          },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updatedAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+        ],
+      }),
+      true,
+    );
 
-    await queryRunner.query(`
-      CREATE TABLE IF NOT EXISTS "conversation_participants" (
-        "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-        "conversationId" uuid NOT NULL,
-        "userId" uuid NOT NULL,
-        "lastReadAt" timestamp,
-        "createdAt" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        CONSTRAINT "FK_conversation_participants_conversation" FOREIGN KEY ("conversationId") REFERENCES "conversations"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_conversation_participants_user" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE
-      );
-    `);
+    // Conversation Participants
+    await queryRunner.createTable(
+      new Table({
+        name: 'conversation_participants',
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
+          {
+            name: 'conversationId',
+            type: 'uuid',
+          },
+          {
+            name: 'userId',
+            type: 'uuid',
+          },
+          {
+            name: 'lastReadAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+        ],
+        foreignKeys: [
+          new TableForeignKey({
+            name: 'FK_conversation_participants_conversation',
+            columnNames: ['conversationId'],
+            referencedTableName: 'conversations',
+            referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
+          }),
+          new TableForeignKey({
+            name: 'FK_conversation_participants_user',
+            columnNames: ['userId'],
+            referencedTableName: 'users',
+            referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
+          }),
+        ],
+      }),
+      true,
+    );
 
-    await queryRunner.query(`
-      CREATE TABLE IF NOT EXISTS "messages" (
-        "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-        "conversationId" uuid NOT NULL,
-        "senderId" uuid NOT NULL,
-        "content" text,
-        "mediaUrl" varchar,
-        "mediaType" varchar,
-        "createdAt" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "updatedAt" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "deletedAt" timestamp,
-        CONSTRAINT "FK_messages_conversation" FOREIGN KEY ("conversationId") REFERENCES "conversations"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_messages_sender" FOREIGN KEY ("senderId") REFERENCES "users"("id") ON DELETE CASCADE
-      );
-    `);
+    // Messages
+    await queryRunner.createTable(
+      new Table({
+        name: 'messages',
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
+          {
+            name: 'conversationId',
+            type: 'uuid',
+          },
+          {
+            name: 'senderId',
+            type: 'uuid',
+          },
+          {
+            name: 'content',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'mediaUrl',
+            type: 'varchar',
+            isNullable: true,
+          },
+          {
+            name: 'mediaType',
+            type: 'varchar',
+            isNullable: true,
+          },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updatedAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'deletedAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+        ],
+        foreignKeys: [
+          new TableForeignKey({
+            name: 'FK_messages_conversation',
+            columnNames: ['conversationId'],
+            referencedTableName: 'conversations',
+            referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
+          }),
+          new TableForeignKey({
+            name: 'FK_messages_sender',
+            columnNames: ['senderId'],
+            referencedTableName: 'users',
+            referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
+          }),
+        ],
+      }),
+      true,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE IF EXISTS "messages";`);
-    await queryRunner.query(`DROP TABLE IF EXISTS "conversation_participants";`);
-    await queryRunner.query(`DROP TABLE IF EXISTS "conversations";`);
+    await queryRunner.dropTable('messages', true);
+    await queryRunner.dropTable('conversation_participants', true);
+    await queryRunner.dropTable('conversations', true);
   }
 }

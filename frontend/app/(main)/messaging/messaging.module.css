@@ -1,51 +1,52 @@
 .container {
   padding-top: 24px !important;
-  padding-bottom: 24px !important;
-  height: calc(100vh - 100px) !important;
+  /* padding-bottom: 24px !important; */
+  height: calc(100dvh - 115px) !important;
 }
 
 .messagingCard {
-  border: 1px solid #E0E0E0 !important;
-  border-radius: 8px !important;
-  background-color: #FFFFFF !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 12px !important;
+  background-color: #ffffff !important;
   display: flex !important;
   height: 100% !important;
   overflow: hidden !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Sidebar Conversations List */
 .sidebar {
-  width: 320px !important;
-  border-right: 1px solid #E0E0E0 !important;
+  width: 340px !important;
+  border-right: 1px solid #e0e0e0 !important;
   display: flex !important;
   flex-direction: column !important;
-  background-color: #FFFFFF !important;
+  background-color: #ffffff !important;
 }
 
 .sidebarHeader {
-  padding: 16px !important;
-  border-bottom: 1px solid #E0E0E0 !important;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #e0e0e0 !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
 }
 
 .sidebarTitle {
-  font-weight: 600 !important;
-  font-size: 1.1rem !important;
-  color: #1D2226 !important;
+  font-weight: 700 !important;
+  font-size: 1.15rem !important;
+  color: #1d2226 !important;
 }
 
 .searchBox {
-  padding: 8px 16px !important;
-  border-bottom: 1px solid #F0F0F0 !important;
-  background-color: #F8F9FA !important;
+  padding: 10px 16px !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  background-color: #f8f9fa !important;
 }
 
 .searchInput {
-  background-color: #EDF3F8 !important;
-  border-radius: 4px !important;
-  padding: 4px 10px !important;
+  background-color: #edf3f8 !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
   font-size: 0.85rem !important;
 }
 
@@ -58,19 +59,47 @@
   display: flex !important;
   gap: 12px !important;
   align-items: center !important;
-  padding: 12px 16px !important;
+  padding: 14px 16px !important;
   cursor: pointer !important;
-  border-bottom: 1px solid #F3F3F3 !important;
-  transition: background-color 0.15s ease !important;
+  border-bottom: 1px solid #f3f3f3 !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
 }
 
 .conversationItem:hover {
-  background-color: #F3F6F8 !important;
+  background-color: #f3f6f8 !important;
 }
 
 .activeConversation {
-  background-color: #EDF3F8 !important;
-  border-left: 4px solid #0A66C2 !important;
+  background-color: #edf3f8 !important;
+  border-left: 4px solid #0a66c2 !important;
+}
+
+.avatarWrapper {
+  position: relative !important;
+  display: inline-block !important;
+}
+
+.onlineBadge {
+  position: absolute !important;
+  bottom: 2px !important;
+  right: 2px !important;
+  width: 11px !important;
+  height: 11px !important;
+  background-color: #10b981 !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 50% !important;
+}
+
+.offlineBadge {
+  position: absolute !important;
+  bottom: 2px !important;
+  right: 2px !important;
+  width: 11px !important;
+  height: 11px !important;
+  background-color: #9ca3af !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 50% !important;
 }
 
 .conversationDetails {
@@ -82,24 +111,25 @@
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
+  margin-bottom: 2px !important;
 }
 
 .userName {
   font-weight: 600 !important;
-  font-size: 0.9rem !important;
-  color: #1D2226 !important;
+  font-size: 0.92rem !important;
+  color: #1d2226 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
 }
 
 .timestamp {
-  font-size: 0.7rem !important;
+  font-size: 0.72rem !important;
   color: #666666 !important;
 }
 
 .lastMessage {
-  font-size: 0.78rem !important;
+  font-size: 0.8rem !important;
   color: #666666 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
@@ -111,22 +141,31 @@
   flex: 1 !important;
   display: flex !important;
   flex-direction: column !important;
-  background-color: #FFFFFF !important;
+  background-color: #ffffff !important;
 }
 
 .chatHeader {
-  padding: 12px 20px !important;
-  border-bottom: 1px solid #E0E0E0 !important;
+  padding: 14px 20px !important;
+  border-bottom: 1px solid #e0e0e0 !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
-  background-color: #FFFFFF !important;
+  background-color: #ffffff !important;
 }
 
 .chatHeaderUser {
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
+}
+
+.statusText {
+  font-size: 0.75rem !important;
+  color: #10b981 !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
 }
 
 .messagesFeed {
@@ -136,50 +175,114 @@
   display: flex !important;
   flex-direction: column !important;
   gap: 12px !important;
-  background-color: #FAFAFA !important;
+  background-color: #fafafa !important;
 }
 
 .messageBubble {
   max-width: 70% !important;
-  padding: 10px 14px !important;
-  border-radius: 12px !important;
-  font-size: 0.9rem !important;
-  line-height: 1.4 !important;
+  padding: 10px 16px !important;
+  border-radius: 14px !important;
+  font-size: 0.92rem !important;
+  line-height: 1.45 !important;
   word-break: break-word !important;
+  animation: fadeIn 0.2s ease-in-out !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .myMessage {
   align-self: flex-end !important;
-  background-color: #0A66C2 !important;
-  color: #FFFFFF !important;
-  border-bottom-right-radius: 2px !important;
+  background-color: #0a66c2 !important;
+  color: #ffffff !important;
+  border-bottom-right-radius: 4px !important;
 }
 
 .theirMessage {
   align-self: flex-start !important;
-  background-color: #E9ECEF !important;
-  color: #1D2226 !important;
-  border-bottom-left-radius: 2px !important;
+  background-color: #e9ecef !important;
+  color: #1d2226 !important;
+  border-bottom-left-radius: 4px !important;
 }
 
 .messageTime {
-  font-size: 0.65rem !important;
+  font-size: 0.68rem !important;
   margin-top: 4px !important;
-  opacity: 0.8 !important;
+  opacity: 0.85 !important;
   text-align: right !important;
 }
 
 .mediaAttachment {
-  max-width: 240px !important;
-  max-height: 240px !important;
+  max-width: 260px !important;
+  max-height: 260px !important;
   border-radius: 8px !important;
   margin-top: 6px !important;
+  object-fit: cover !important;
+}
+
+/* Typing Indicator */
+.typingIndicatorContainer {
+  align-self: flex-start !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 14px !important;
+  background-color: #e9ecef !important;
+  border-radius: 14px !important;
+  border-bottom-left-radius: 4px !important;
+}
+
+.typingText {
+  font-size: 0.78rem !important;
+  color: #5e6e82 !important;
+  font-style: italic !important;
+}
+
+.typingDots {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.typingDot {
+  width: 6px !important;
+  height: 6px !important;
+  background-color: #0a66c2 !important;
+  border-radius: 50% !important;
+  animation: bounce 1.4s infinite ease-in-out both !important;
+}
+
+.typingDot:nth-child(1) {
+  animation-delay: -0.32s !important;
+}
+
+.typingDot:nth-child(2) {
+  animation-delay: -0.16s !important;
+}
+
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
 }
 
 .inputArea {
   padding: 12px 16px !important;
-  border-top: 1px solid #E0E0E0 !important;
-  background-color: #FFFFFF !important;
+  border-top: 1px solid #e0e0e0 !important;
+  background-color: #ffffff !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;

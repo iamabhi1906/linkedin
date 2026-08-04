@@ -35,9 +35,14 @@ export const createPostThunk = createAsyncThunk(
 
 export const toggleLikeThunk = createAsyncThunk(
   'post/toggleLike',
-  async (postId: string, { rejectWithValue }) => {
+  async (
+    payload: string | { postId: string; reaction?: string },
+    { rejectWithValue },
+  ) => {
     try {
-      const data = await postService.toggleLike(postId);
+      const postId = typeof payload === 'string' ? payload : payload.postId;
+      const reaction = typeof payload === 'string' ? undefined : payload.reaction;
+      const data = await postService.toggleLike(postId, reaction);
       return { postId, ...data };
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {

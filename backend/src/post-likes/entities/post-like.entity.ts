@@ -14,22 +14,25 @@ import { User } from '../../users/entities/user.entity';
 @Index(['postId', 'userId'], { unique: true })
 export class PostLike {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'uuid' })
-  postId: string;
+  postId!: string;
 
   @ManyToOne(() => Post, (post) => post.likes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId' })
-  post: Post;
+  post!: Post;
 
   @Column({ type: 'uuid' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
+
+  @Column({ type: 'varchar', length: 50, default: 'like' })
+  reaction!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

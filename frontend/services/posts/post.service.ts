@@ -23,8 +23,8 @@ export const postService = {
     return response.data;
   },
 
-  async toggleLike(postId: string) {
-    const response = await apiClient.post(`/posts/${postId}/likes`);
+  async toggleLike(postId: string, reaction?: string) {
+    const response = await apiClient.post(`/posts/${postId}/likes`, { reaction });
     return response.data;
   },
 

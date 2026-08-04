@@ -16,7 +16,8 @@ export class PostLikeService {
   async toggleLike(
     postId: string,
     userId: string,
-  ): Promise<{ liked: boolean; likesCount: number }> {
+    reaction = 'like',
+  ): Promise<{ liked: boolean; likesCount: number; reaction?: string }> {
     const post = await this.postRepository.findOne({ where: { id: postId } });
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -27,16 +28,22 @@ export class PostLikeService {
     });
 
     if (existingLike) {
-      await this.likeRepository.remove(existingLike);
-      post.likesCount = Math.max(0, post.likesCount - 1);
-      await this.postRepository.save(post);
-      return { liked: false, likesCount: post.likesCount };
+      if (reaction && existingLike.reaction !== reaction) {
+        existingLike.reaction = reaction;
+        await this.likeRepository.save(existingLike);
+        return { liked: true, likesCount: post.likesCount, reaction: existingLike.reaction };
+      } else {
+        await this.likeRepository.remove(existingLike);
+        post.likesCount = Math.max(0, post.likesCount - 1);
+        await this.postRepository.save(post);
+        return { liked: false, likesCount: post.likesCount, reaction: undefined };
+      }
     } else {
-      const like = this.likeRepository.create({ postId, userId });
+      const like = this.likeRepository.create({ postId, userId, reaction });
       await this.likeRepository.save(like);
       post.likesCount += 1;
       await this.postRepository.save(post);
-      return { liked: true, likesCount: post.likesCount };
+      return { liked: true, likesCount: post.likesCount, reaction: like.reaction };
     }
   }
 

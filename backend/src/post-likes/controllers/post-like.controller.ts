@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -19,8 +20,9 @@ export class PostLikeController {
   async toggleLike(
     @Param('postId') postId: string,
     @Req() req: AuthenticatedRequest,
+    @Body('reaction') reaction?: string,
   ) {
-    const result = await this.likeService.toggleLike(postId, req.user.sub);
+    const result = await this.likeService.toggleLike(postId, req.user.sub, reaction);
     return { status: 'success', ...result };
   }
 

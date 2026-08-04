@@ -10,7 +10,10 @@ export class GetPostService {
     private readonly postRepository: Repository<Post>,
   ) {}
 
-  async findById(id: string, userId?: string): Promise<Omit<Post, 'likes'> & { isLiked: boolean }> {
+  async findById(
+    id: string,
+    userId?: string,
+  ): Promise<Omit<Post, 'likes'> & { isLiked: boolean }> {
     const post = await this.postRepository.findOne({
       where: { id },
       relations: {
@@ -26,11 +29,13 @@ export class GetPostService {
     const isLiked = userId
       ? post.likes?.some((like) => like.userId === userId) || false
       : false;
-    const { likes, ...rest } = post;
-    return { ...rest, isLiked };
+    return { ...post, isLiked };
   }
 
-  async findByAuthor(authorId: string, currentUserId?: string): Promise<(Omit<Post, 'likes'> & { isLiked: boolean })[]> {
+  async findByAuthor(
+    authorId: string,
+    currentUserId?: string,
+  ): Promise<(Omit<Post, 'likes'> & { isLiked: boolean })[]> {
     const posts = await this.postRepository.find({
       where: { authorId },
       relations: { author: true, organization: true, media: true, likes: true },
@@ -40,12 +45,14 @@ export class GetPostService {
       const isLiked = currentUserId
         ? post.likes?.some((like) => like.userId === currentUserId) || false
         : false;
-      const { likes, ...rest } = post;
-      return { ...rest, isLiked };
+      return { ...post, isLiked };
     });
   }
 
-  async findByOrganization(organizationId: string, currentUserId?: string): Promise<(Omit<Post, 'likes'> & { isLiked: boolean })[]> {
+  async findByOrganization(
+    organizationId: string,
+    currentUserId?: string,
+  ): Promise<(Omit<Post, 'likes'> & { isLiked: boolean })[]> {
     const posts = await this.postRepository.find({
       where: { organizationId },
       relations: { author: true, organization: true, media: true, likes: true },
@@ -55,8 +62,7 @@ export class GetPostService {
       const isLiked = currentUserId
         ? post.likes?.some((like) => like.userId === currentUserId) || false
         : false;
-      const { likes, ...rest } = post;
-      return { ...rest, isLiked };
+      return { ...post, isLiked };
     });
   }
 }

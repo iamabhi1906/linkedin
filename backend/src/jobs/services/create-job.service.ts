@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { Job } from '../entities/job.entity';
 import { CreateJobDto } from '../dto/request/create-job.dto';
 import { OrganizationMember } from '../../organization-members/entities/organization-member.entity';
-import { OrganizationRole } from '../../organization-members/enums/organization-role.enum';
 import { JobType } from '../enums/job-type.enum';
 import { WorkplaceType } from '../enums/workplace-type.enum';
 import { JobStatus } from '../enums/job-status.enum';
@@ -29,9 +28,9 @@ export class CreateJobService {
         'You do not have permission to post jobs for this organization. Only people in an organization can create a job.',
       );
     }
-
-    // Validate payload using Zod schema
-    const validatedData = createJobSchema.partial({ jobType: true, workplaceType: true, status: true }).parse(dto);
+    const validatedData = createJobSchema
+      .partial({ jobType: true, workplaceType: true, status: true })
+      .parse(dto);
 
     const job = this.jobRepository.create({
       ...validatedData,

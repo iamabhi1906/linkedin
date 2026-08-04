@@ -36,11 +36,6 @@ import { PostCommentsModule } from '../post-comments/post-comments.module';
     FeedService,
     RepostPostService,
   ],
-  exports: [
-    CreatePostService,
-    GetPostService,
-    FeedService,
-    RepostPostService,
-  ],
+  exports: [CreatePostService, GetPostService, FeedService, RepostPostService],
 })
 export class PostsModule {}

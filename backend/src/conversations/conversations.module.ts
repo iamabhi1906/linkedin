@@ -7,7 +7,8 @@ import { Follow } from '../follows/entities/follow.entity';
 import { ConversationsService } from './conversations.service';
 import { ConversationsController } from './conversations.controller';
 import { UploadsModule } from '../uploads/uploads.module';
-import { TokenModule } from 'src/token/token.module';
+import { TokenModule } from '../token/token.module';
+import { ChatModule } from '../chat/chat.module';
 
 @Module({
   imports: [
@@ -19,9 +20,10 @@ import { TokenModule } from 'src/token/token.module';
     ]),
     UploadsModule,
     TokenModule,
+    ChatModule,
   ],
   controllers: [ConversationsController],
   providers: [ConversationsService],
   exports: [ConversationsService],
 })
-export class ConversationsModule { }
+export class ConversationsModule {}

@@ -22,6 +22,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { JobApplicationsModule } from './job-applications/job-applications.module';
 import { FollowsModule } from './follows/follows.module';
 import { ConversationsModule } from './conversations/conversations.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -47,8 +48,10 @@ import { ConversationsModule } from './conversations/conversations.module';
     JobApplicationsModule,
     FollowsModule,
     ConversationsModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
+

@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { Post } from './post.type';
 import { createPostThunk, fetchFeedThunk, toggleLikeThunk, repostThunk } from './post.action';
+import { RootState } from '@/app/store';
 
 interface PostState {
   posts: Post[];
@@ -42,19 +43,18 @@ const postSlice = createSlice({
         const post = state.posts.find((p) => p.id === action.payload.postId);
         if (post) {
           post.likesCount = action.payload.likesCount;
-          post.isLiked = action.payload.isLiked;
+          post.isLiked = action.payload.liked;
+          post.likeReaction = action.payload.reaction;
         }
       })
       .addCase(repostThunk.fulfilled, (state, action) => {
         const { postId, post: newPost, isReposted } = action.payload;
-        
+
         // Find targeted post in current feed state
         const targetPost = state.posts.find((p) => p.id === postId || p.originalPostId === postId);
         if (targetPost) {
           targetPost.isReposted = isReposted;
-          targetPost.repostsCount = isReposted
-            ? (targetPost.repostsCount || 0) + 1
-            : Math.max(0, (targetPost.repostsCount || 0) - 1);
+          targetPost.repostsCount = isReposted ? (targetPost.repostsCount || 0) + 1 : Math.max(0, (targetPost.repostsCount || 0) - 1);
         }
 
         if (newPost && isReposted) {
@@ -64,4 +64,5 @@ const postSlice = createSlice({
   },
 });
 
+export const selectPost = (state: RootState) => state.post;
 export default postSlice.reducer;

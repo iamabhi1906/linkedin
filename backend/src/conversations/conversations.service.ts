@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,6 +13,8 @@ import { FollowStatus } from '../follows/enums/follow-status.enum';
 import { UploadsService } from '../uploads/uploads.service';
 import { UploadFolder } from '../uploads/enums/upload-folder.enum';
 import { SendMessageDto } from './dto/request/send-message.dto';
+import { LiveChatService } from 'src/chat/services/chat.service';
+import 'multer';
 
 @Injectable()
 export class ConversationsService {
@@ -27,18 +28,30 @@ export class ConversationsService {
     @InjectRepository(Follow)
     private readonly followRepository: Repository<Follow>,
     private readonly uploadsService: UploadsService,
-  ) { }
+    private readonly chatGateway: LiveChatService,
+  ) {}
 
-  async getOrCreateConversation(currentUserId: string, targetUserId: string): Promise<Conversation> {
+  async getOrCreateConversation(
+    currentUserId: string,
+    targetUserId: string,
+  ): Promise<Conversation> {
     if (currentUserId === targetUserId) {
-      throw new BadRequestException('Cannot start a conversation with yourself');
+      throw new BadRequestException(
+        'Cannot start a conversation with yourself',
+      );
     }
-
-    // Verify follow relation between users
     const followRelation = await this.followRepository.findOne({
       where: [
-        { followerId: currentUserId, followingId: targetUserId, status: FollowStatus.ACCEPTED },
-        { followerId: targetUserId, followingId: currentUserId, status: FollowStatus.ACCEPTED },
+        {
+          followerId: currentUserId,
+          followingId: targetUserId,
+          status: FollowStatus.ACCEPTED,
+        },
+        {
+          followerId: targetUserId,
+          followingId: currentUserId,
+          status: FollowStatus.ACCEPTED,
+        },
       ],
     });
 
@@ -48,7 +61,6 @@ export class ConversationsService {
       );
     }
 
-    // Find existing direct conversation between these two users
     const myParticipants = await this.participantRepository.find({
       where: { userId: currentUserId },
       relations: { conversation: { participants: { user: true } } },
@@ -57,14 +69,15 @@ export class ConversationsService {
     for (const p of myParticipants) {
       const conv = p.conversation;
       if (conv.type === 'DIRECT') {
-        const hasTarget = conv.participants.some((part) => part.userId === targetUserId);
+        const hasTarget = conv.participants.some(
+          (part) => part.userId === targetUserId,
+        );
         if (hasTarget) {
           return conv;
         }
       }
     }
 
-    // Create new direct conversation
     const newConv = this.conversationRepository.create({
       type: 'DIRECT',
       participants: [
@@ -75,13 +88,18 @@ export class ConversationsService {
 
     const savedConv = await this.conversationRepository.save(newConv);
 
-    // Return with populated relations
-    return (await this.conversationRepository.findOne({
-      where: { id: savedConv.id },
-      relations: {
-        participants: { user: true },
-      },
-    })) || savedConv;
+    const populatedConv =
+      (await this.conversationRepository.findOne({
+        where: { id: savedConv.id },
+        relations: {
+          participants: { user: true },
+        },
+      })) || savedConv;
+
+    this.chatGateway.emitToUser(targetUserId, 'conversationCreated', {
+      conversation: populatedConv,
+    });
+    return populatedConv;
   }
 
   async getUserConversations(userId: string) {
@@ -98,11 +116,14 @@ export class ConversationsService {
 
     return myParticipants.map((p) => {
       const conv = p.conversation;
-      const otherParticipant = conv.participants.find((part) => part.userId !== userId);
-
-      // Get latest message
+      const otherParticipant = conv.participants.find(
+        (part) => part.userId !== userId,
+      );
       const messages = conv.messages || [];
-      messages.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      messages.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
       const lastMessage = messages[0] || null;
 
       return {
@@ -115,18 +136,22 @@ export class ConversationsService {
     });
   }
 
-  async getMessages(conversationId: string, userId: string, page = 1, limit = 50) {
-    // Verify participant
+  async getMessages(
+    conversationId: string,
+    userId: string,
+    page = 1,
+    limit = 50,
+  ) {
     const isParticipant = await this.participantRepository.findOne({
       where: { conversationId, userId },
     });
 
     if (!isParticipant) {
-      throw new ForbiddenException('You are not a participant in this conversation');
+      throw new ForbiddenException(
+        'You are not a participant in this conversation',
+      );
     }
-
     const skip = (page - 1) * limit;
-
     const [messages, total] = await this.messageRepository.findAndCount({
       where: { conversationId },
       relations: { sender: true },
@@ -135,7 +160,6 @@ export class ConversationsService {
       take: limit,
     });
 
-    // Update lastReadAt for current user
     await this.participantRepository.update(
       { conversationId, userId },
       { lastReadAt: new Date() },
@@ -160,14 +184,19 @@ export class ConversationsService {
     });
 
     if (!participant) {
-      throw new ForbiddenException('You are not a participant in this conversation');
+      throw new ForbiddenException(
+        'You are not a participant in this conversation',
+      );
     }
 
     let mediaUrl = dto.mediaUrl || null;
     let mediaType = dto.mediaType || null;
 
     if (file) {
-      const path = await this.uploadsService.uploadSingle(file, UploadFolder.POST_MEDIA);
+      const path = await this.uploadsService.uploadSingle(
+        file,
+        UploadFolder.POST_MEDIA,
+      );
       mediaUrl = `http://localhost:5050${path}`;
       mediaType = file.mimetype;
     }
@@ -197,9 +226,27 @@ export class ConversationsService {
       { lastReadAt: new Date() },
     );
 
-    return await this.messageRepository.findOne({
+    const fullMessage = await this.messageRepository.findOne({
       where: { id: savedMessage.id },
       relations: { sender: true },
     });
+    if (fullMessage) {
+      const participants = await this.participantRepository.find({
+        where: { conversationId },
+      });
+      const payload = {
+        message: fullMessage,
+        conversationId,
+      };
+      this.chatGateway.emitToConversation(
+        conversationId,
+        'newMessage',
+        payload,
+      );
+      for (const p of participants) {
+        this.chatGateway.emitToUser(p.userId, 'newMessage', payload);
+      }
+    }
+    return fullMessage;
   }
 }

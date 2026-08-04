@@ -32,7 +32,7 @@ export default function CreatePostCard() {
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<{ url: string; type: string }[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [audience, setAudience] = useState<'Anyone' | 'Connections only'>('Anyone');
+  const [audience, setAudience] = useState<'PUBLIC' | 'CONNECTIONS'>('PUBLIC');
   const [audienceAnchor, setAudienceAnchor] = useState<null | HTMLElement>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -73,7 +73,7 @@ export default function CreatePostCard() {
     if (!content.trim() && mediaFiles.length === 0) return;
     setSubmitting(true);
     try {
-      const newPost = await dispatch(createPostThunk({ content })).unwrap();
+      const newPost = await dispatch(createPostThunk({ content, visibility: audience })).unwrap();
 
       if (mediaFiles.length > 0 && newPost?.id) {
         for (const file of mediaFiles) {
@@ -138,7 +138,7 @@ export default function CreatePostCard() {
             <Box className={styles.userInfo}>
               <Typography className={styles.userName}>{currentUser?.name || 'Abhishek Kumar'}</Typography>
               <Button size="small" className={styles.audiencePill} onClick={(e) => setAudienceAnchor(e.currentTarget)}>
-                {audience === 'Anyone' ? <PublicIcon sx={{ fontSize: 14 }} /> : <PeopleIcon sx={{ fontSize: 14 }} />}
+                {audience === 'PUBLIC' ? <PublicIcon sx={{ fontSize: 14 }} /> : <PeopleIcon sx={{ fontSize: 14 }} />}
                 {audience} <ArrowDropDownIcon sx={{ fontSize: 16 }} />
               </Button>
             </Box>
@@ -151,7 +151,7 @@ export default function CreatePostCard() {
         <Menu anchorEl={audienceAnchor} open={Boolean(audienceAnchor)} onClose={() => setAudienceAnchor(null)}>
           <MenuItem
             onClick={() => {
-              setAudience('Anyone');
+              setAudience('PUBLIC');
               setAudienceAnchor(null);
             }}
           >
@@ -159,7 +159,7 @@ export default function CreatePostCard() {
           </MenuItem>
           <MenuItem
             onClick={() => {
-              setAudience('Connections only');
+              setAudience('CONNECTIONS');
               setAudienceAnchor(null);
             }}
           >

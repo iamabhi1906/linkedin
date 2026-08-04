@@ -7,6 +7,7 @@ import userReducer from '@/features/user/user.slice';
 import postReducer from '@/features/post/post.slice';
 import organizationReducer from '@/features/organization/organization.slice';
 import jobReducer from '@/features/job/job.slice';
+import messagingReducer from '@/features/messaging/messaging.slice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 const persistedAuthReducer = persistReducer(
@@ -25,6 +26,7 @@ const store = configureStore({
     post: postReducer,
     organization: organizationReducer,
     job: jobReducer,
+    messaging: messagingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

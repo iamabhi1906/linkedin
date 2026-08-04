@@ -16,11 +16,16 @@ export interface Post {
   commentsCount: number;
   repostsCount?: number;
   isLiked?: boolean;
+  likeReaction?: string;
   isReposted?: boolean;
   originalPostId?: string | null;
   originalPost?: Post | null;
   media: { url?: string; fileUrl?: string; mediaType?: string }[];
   createdAt: string;
+  reactionCounts: {
+    reaction: string;
+    count: number;
+  }[];
   updatedAt: string;
   deletedAt: string | null;
 }

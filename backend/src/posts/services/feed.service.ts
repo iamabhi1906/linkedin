@@ -5,26 +5,7 @@ import { Post } from '../entities/post.entity';
 import { PostVisibility } from '../enums/post-visibility.enum';
 import { Follow } from '../../follows/entities/follow.entity';
 import { FollowStatus } from '../../follows/enums/follow-status.enum';
-
-export interface FeedPostResult {
-  id: string;
-  authorId: string;
-  author: Post['author'];
-  organizationId?: string;
-  organization?: Post['organization'];
-  content: string;
-  visibility: PostVisibility;
-  likesCount: number;
-  commentsCount: number;
-  repostsCount: number;
-  originalPostId?: string;
-  originalPost?: Post;
-  media: Post['media'];
-  createdAt: Date;
-  updatedAt: Date;
-  isLiked: boolean;
-  isReposted: boolean;
-}
+import { FeedPostResult } from '../interfaces/feed-post-result.interface';
 
 @Injectable()
 export class FeedService {
@@ -41,9 +22,7 @@ export class FeedService {
     userId?: string,
   ): Promise<{ posts: FeedPostResult[]; total: number }> {
     const skip = (page - 1) * limit;
-
     let allowedAuthorIds: string[] = [];
-
     if (userId) {
       const follows = await this.followRepository.find({
         where: { followerId: userId, status: FollowStatus.ACCEPTED },
@@ -54,7 +33,6 @@ export class FeedService {
         allowedAuthorIds = [userId, ...followingIds];
       }
     }
-
     const queryBuilder = this.postRepository
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.author', 'author')
@@ -66,7 +44,9 @@ export class FeedService {
       .leftJoinAndSelect('originalPost.organization', 'origOrg')
       .leftJoinAndSelect('originalPost.media', 'origMedia')
       .leftJoinAndSelect('originalPost.likes', 'origLikes')
-      .where('post.visibility = :visibility', { visibility: PostVisibility.PUBLIC });
+      .where('post.visibility = :visibility', {
+        visibility: PostVisibility.PUBLIC,
+      });
 
     if (allowedAuthorIds.length > 0) {
       queryBuilder.andWhere(
@@ -74,15 +54,8 @@ export class FeedService {
         { allowedAuthorIds },
       );
     }
-
-    queryBuilder
-      .orderBy('post.createdAt', 'DESC')
-      .skip(skip)
-      .take(limit);
-
+    queryBuilder.orderBy('post.createdAt', 'DESC').skip(skip).take(limit);
     const [posts, total] = await queryBuilder.getManyAndCount();
-
-    // Check which posts the current user has reposted
     let userRepostedOriginalIds = new Set<string>();
     if (userId && posts.length > 0) {
       const postIds = posts.map((p) => p.originalPostId || p.id);
@@ -96,28 +69,38 @@ export class FeedService {
           .filter((id): id is string => Boolean(id)),
       );
     }
-
     const formattedPosts: FeedPostResult[] = posts.map((post) => {
-      const isLiked = userId
-        ? post.likes?.some((like) => like.userId === userId) || false
-        : false;
-
+      const userLike = userId
+        ? post.likes?.find((like) => like.userId === userId)
+        : null;
+      const isLiked = Boolean(userLike);
+      const userReaction = userLike?.reaction ?? null;
+      const reactionCounts = Object.entries(
+        post.likes.reduce(
+          (acc, like) => {
+            acc[like.reaction] = (acc[like.reaction] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ),
+      ).map(([reaction, count]) => ({
+        reaction,
+        count,
+      }));
       const rootId = post.originalPostId || post.id;
       const isReposted = userId ? userRepostedOriginalIds.has(rootId) : false;
-
-      const { likes, ...rest } = post;
-
+      const { ...rest } = post;
       if (rest.originalPost && rest.originalPost.likes) {
         delete (rest.originalPost as Partial<Post>).likes;
       }
-
       return {
         ...rest,
         isLiked,
+        userReaction,
+        reactionCounts,
         isReposted,
       };
     });
-
     return { posts: formattedPosts, total };
   }
 }
