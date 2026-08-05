@@ -15,6 +15,8 @@ import { UploadFolder } from '../uploads/enums/upload-folder.enum';
 import { SendMessageDto } from './dto/request/send-message.dto';
 import { LiveChatService } from 'src/chat/services/chat.service';
 import 'multer';
+import { Transactional } from 'typeorm-transactional';
+import CreateNewMessageDTO from './dto/message/create-message.dto';
 
 @Injectable()
 export class ConversationsService {
@@ -54,13 +56,11 @@ export class ConversationsService {
         },
       ],
     });
-
     if (!followRelation) {
       throw new ForbiddenException(
         'Messaging is only allowed between connected users that follow each other',
       );
     }
-
     const myParticipants = await this.participantRepository.find({
       where: { userId: currentUserId },
       relations: { conversation: { participants: { user: true } } },
@@ -205,29 +205,19 @@ export class ConversationsService {
       throw new BadRequestException('Message must contain content or media');
     }
 
-    const newMessage = this.messageRepository.create({
+    const message = await this.saveMessage({
       conversationId,
       senderId,
       content: dto.content?.trim() || null,
-      mediaUrl,
       mediaType,
+      mediaUrl,
     });
-
-    const savedMessage = await this.messageRepository.save(newMessage);
-
-    await this.conversationRepository.update(conversationId, {
-      updatedAt: new Date(),
-    });
-
-    await this.participantRepository.update(
-      { conversationId, userId: senderId },
-      { lastReadAt: new Date() },
-    );
 
     const fullMessage = await this.messageRepository.findOne({
-      where: { id: savedMessage.id },
+      where: { id: message.id },
       relations: { sender: true },
     });
+
     if (fullMessage) {
       const participants = await this.participantRepository.find({
         where: { conversationId },
@@ -246,5 +236,23 @@ export class ConversationsService {
       }
     }
     return fullMessage;
+  }
+
+  @Transactional()
+  private async saveMessage(payload: CreateNewMessageDTO) {
+    const now = new Date();
+    const newMessage = this.messageRepository.create(payload);
+    const savedMessage = await this.messageRepository.save(newMessage);
+    await this.conversationRepository.update(savedMessage.conversationId, {
+      updatedAt: now,
+    });
+    await this.participantRepository.update(
+      {
+        conversationId: savedMessage.conversationId,
+        userId: savedMessage.senderId,
+      },
+      { lastReadAt: new Date() },
+    );
+    return savedMessage;
   }
 }

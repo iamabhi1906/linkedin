@@ -12,25 +12,25 @@ import { MediaType } from '../enums/media-type.enum';
 @Entity('post_media')
 export class PostMedia {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'uuid' })
-  postId: string;
+  postId!: string;
 
   @ManyToOne(() => Post, (post) => post.media, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId' })
-  post: Post;
+  post!: Post;
 
   @Column()
-  url: string;
+  url!: string;
 
   @Column({
     type: 'enum',
     enum: MediaType,
     default: MediaType.IMAGE,
   })
-  mediaType: MediaType;
+  mediaType!: MediaType;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

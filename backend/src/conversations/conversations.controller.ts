@@ -20,17 +20,18 @@ import { SendMessageDto } from './dto/request/send-message.dto';
 @Controller('conversations')
 @UseGuards(JwtAuthGuard)
 export class ConversationsController {
-  constructor(private readonly conversationsService: ConversationsService) { }
+  constructor(private readonly conversationsService: ConversationsService) {}
 
   @Post()
   async getOrCreate(
     @Req() req: AuthenticatedRequest,
     @Body() dto: CreateConversationDto,
   ) {
-    const conversation = await this.conversationsService.getOrCreateConversation(
-      req.user.sub,
-      dto.targetUserId,
-    );
+    const conversation =
+      await this.conversationsService.getOrCreateConversation(
+        req.user.sub,
+        dto.targetUserId,
+      );
     return { status: 'success', conversation };
   }
 

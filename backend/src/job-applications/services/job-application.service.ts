@@ -13,6 +13,8 @@ import { UpdateApplicationStatusDto } from '../dto/request/update-application-st
 import { OrganizationMember } from '../../organization-members/entities/organization-member.entity';
 import { OrganizationRole } from '../../organization-members/enums/organization-role.enum';
 import { ApplicationStatus } from '../enums/application-status.enum';
+import { Transactional } from 'typeorm-transactional';
+import { type newJobApply } from '../interfaces/new-job-apply.interface';
 
 @Injectable()
 export class JobApplicationService {
@@ -32,34 +34,20 @@ export class JobApplicationService {
     resumeUrl?: string,
   ): Promise<JobApplication> {
     const job = await this.jobRepository.findOne({ where: { id: jobId } });
-    if (!job) {
-      throw new NotFoundException('Job not found');
-    }
+    if (!job) throw new NotFoundException('Job not found');
 
     const existing = await this.applicationRepository.findOne({
       where: { jobId, applicantId },
     });
-    if (existing) {
+    if (existing)
       throw new ConflictException('You have already applied for this job');
-    }
-
-    const application = this.applicationRepository.create({
-      jobId,
+    const savedJobApplication = await this.createNewJobApplication({
+      job,
+      dto,
       applicantId,
-      name: dto.name,
-      coverLetter: dto.coverLetter,
-      phone: dto.phone,
-      email: dto.email,
       resumeUrl,
-      status: ApplicationStatus.APPLIED,
     });
-
-    const saved = await this.applicationRepository.save(application);
-
-    job.applicationsCount += 1;
-    await this.jobRepository.save(job);
-
-    return saved;
+    return savedJobApplication;
   }
 
   async updateStatus(
@@ -69,10 +57,7 @@ export class JobApplicationService {
     dto: UpdateApplicationStatusDto,
   ): Promise<JobApplication> {
     const job = await this.jobRepository.findOne({ where: { id: jobId } });
-    if (!job) {
-      throw new NotFoundException('Job not found');
-    }
-
+    if (!job) throw new NotFoundException('Job not found');
     if (job.postedById !== userId) {
       const member = await this.memberRepository.findOne({
         where: { organizationId: job.organizationId, userId },
@@ -87,14 +72,12 @@ export class JobApplicationService {
         );
       }
     }
-
     const application = await this.applicationRepository.findOne({
       where: { id: applicationId, jobId },
     });
     if (!application) {
       throw new NotFoundException('Job application not found');
     }
-
     application.status = dto.status;
     return await this.applicationRepository.save(application);
   }
@@ -136,5 +119,26 @@ export class JobApplicationService {
       relations: { job: { organization: true } },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  @Transactional()
+  private async createNewJobApplication(
+    payload: newJobApply,
+  ): Promise<JobApplication> {
+    const application = this.applicationRepository.create({
+      jobId: payload.job.id,
+      applicantId: payload.applicantId,
+      name: payload.dto.name,
+      coverLetter: payload.dto.coverLetter,
+      phone: payload.dto.phone,
+      email: payload.dto.email,
+      resumeUrl: payload.resumeUrl,
+      status: ApplicationStatus.APPLIED,
+    });
+    const savedJobApplication =
+      await this.applicationRepository.save(application);
+    payload.job.applicationsCount += 1;
+    await this.jobRepository.save(payload.job);
+    return savedJobApplication;
   }
 }

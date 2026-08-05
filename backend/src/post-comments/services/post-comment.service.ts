@@ -96,7 +96,8 @@ export class PostCommentService {
     });
 
     const formatComment = (c: PostComment) => {
-      const userLike = userId && c.likes ? c.likes.find((l) => l.userId === userId) : null;
+      const userLike =
+        userId && c.likes ? c.likes.find((l) => l.userId === userId) : null;
       return {
         ...c,
         liked: !!userLike,
@@ -107,5 +108,15 @@ export class PostCommentService {
     };
 
     return comments.map(formatComment);
+  }
+
+  async getCommentById(commentId: string): Promise<PostComment> {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
+    });
+    if (!comment)
+      throw new NotFoundException(`Comment with Id:${commentId} not found..!!`);
+
+    return comment;
   }
 }

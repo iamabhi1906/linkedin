@@ -78,7 +78,6 @@ export class User {
   })
   isPrivate!: boolean;
 
-
   @Column({
     type: 'enum',
     enum: UserStatus,

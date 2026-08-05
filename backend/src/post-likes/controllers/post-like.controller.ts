@@ -22,7 +22,11 @@ export class PostLikeController {
     @Req() req: AuthenticatedRequest,
     @Body('reaction') reaction?: string,
   ) {
-    const result = await this.likeService.toggleLike(postId, req.user.sub, reaction);
+    const result = await this.likeService.toggleLike(
+      postId,
+      req.user.sub,
+      reaction,
+    );
     return { status: 'success', ...result };
   }
 

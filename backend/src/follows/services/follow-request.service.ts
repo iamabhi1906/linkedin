@@ -44,7 +44,6 @@ export class FollowRequestService {
     const targetStatus = isPublic
       ? FollowStatus.ACCEPTED
       : FollowStatus.PENDING;
-
     if (follow) {
       if (follow.status === FollowStatus.ACCEPTED) {
         throw new ConflictException('You are already following this user');
@@ -60,7 +59,6 @@ export class FollowRequestService {
         status: targetStatus,
       });
     }
-
     const savedFollow = await this.followRepository.save(follow);
     const message = isPublic
       ? 'You are now following this user'

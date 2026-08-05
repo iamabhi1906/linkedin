@@ -18,6 +18,7 @@ import { PostMediaModule } from '../post-media/post-media.module';
 import { PostLikesModule } from '../post-likes/post-likes.module';
 import { PostCommentsModule } from '../post-comments/post-comments.module';
 import { LikesModule } from '../likes/likes.module';
+import { PostService } from './services/post.service';
 
 @Module({
   imports: [
@@ -38,6 +39,12 @@ import { LikesModule } from '../likes/likes.module';
     FeedService,
     RepostPostService,
   ],
-  exports: [CreatePostService, GetPostService, FeedService, RepostPostService],
+  exports: [
+    CreatePostService,
+    GetPostService,
+    FeedService,
+    RepostPostService,
+    PostService,
+  ],
 })
 export class PostsModule {}

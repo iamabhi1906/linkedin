@@ -61,17 +61,14 @@ export class FollowService {
   }
 
   async unfollow(followerId: string, targetUserId: string): Promise<void> {
-    if (followerId === targetUserId) {
+    if (followerId === targetUserId)
       throw new BadRequestException('You cannot unfollow yourself');
-    }
 
     const follow = await this.followRepository.findOne({
       where: { followerId, followingId: targetUserId },
     });
-
-    if (!follow || follow.status !== FollowStatus.ACCEPTED) {
+    if (!follow || follow.status !== FollowStatus.ACCEPTED)
       throw new NotFoundException('You are not following this user');
-    }
 
     await this.followRepository.remove(follow);
   }

@@ -9,7 +9,11 @@ export class PostLikeService {
     return this.likeService.togglePostLike(postId, userId, reaction);
   }
 
-  async toggleCommentLike(commentId: string, userId: string, reaction = 'like') {
+  async toggleCommentLike(
+    commentId: string,
+    userId: string,
+    reaction = 'like',
+  ) {
     return this.likeService.toggleCommentLike(commentId, userId, reaction);
   }
 

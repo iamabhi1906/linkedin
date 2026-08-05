@@ -2,8 +2,13 @@ import 'dotenv/config';
 import { join } from 'path';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
+import {
+  addTransactionalDataSource,
+  initializeTransactionalContext,
+  StorageDriver,
+} from 'typeorm-transactional';
 
-export default new DataSource({
+const dataSource = new DataSource({
   type: 'postgres',
   host: process.env.POSTGRES_HOST,
   port: Number(process.env.POSTGRES_PORT),
@@ -20,3 +25,11 @@ export default new DataSource({
   synchronize: false,
   logging: true,
 } as DataSourceOptions & SeederOptions);
+
+initializeTransactionalContext({
+  storageDriver: StorageDriver.ASYNC_LOCAL_STORAGE,
+});
+
+addTransactionalDataSource(dataSource);
+
+export default dataSource;

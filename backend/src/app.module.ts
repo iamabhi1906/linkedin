@@ -31,6 +31,7 @@ import { ChatModule } from './chat/chat.module';
       isGlobal: true,
       validate: validateEnv,
     }),
+
     TypeOrmModule.forRootAsync(ormConfig),
     TokenModule,
     EmailVerificationModule,
@@ -56,5 +57,3 @@ import { ChatModule } from './chat/chat.module';
   providers: [AppService],
 })
 export class AppModule {}
-
-

@@ -4,8 +4,10 @@ import cookieParser from 'cookie-parser';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import express from 'express';
 import { join } from 'path';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
+  initializeTransactionalContext();
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
   app.useGlobalPipes(
@@ -21,8 +23,6 @@ async function bootstrap() {
   });
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use('/public', express.static(join(process.cwd(), 'public')));
-
-
 
   await app.listen(process.env.PORT ?? 3000);
 }

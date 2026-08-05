@@ -14,37 +14,37 @@ import { User } from '../../users/entities/user.entity';
 @Entity('messages')
 export class Message {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'uuid' })
-  conversationId: string;
+  conversationId!: string;
 
   @ManyToOne(() => Conversation, (c) => c.messages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'conversationId' })
-  conversation: Conversation;
+  conversation!: Conversation;
 
   @Column({ type: 'uuid' })
-  senderId: string;
+  senderId!: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'senderId' })
-  sender: User;
+  sender!: User;
 
   @Column({ type: 'text', nullable: true })
-  content: string | null;
+  content!: string | null;
 
   @Column({ type: 'varchar', nullable: true })
-  mediaUrl: string | null;
+  mediaUrl!: string | null;
 
   @Column({ type: 'varchar', nullable: true })
-  mediaType: string | null;
+  mediaType!: string | null;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deletedAt: Date | null;
+  deletedAt!: Date | null;
 }

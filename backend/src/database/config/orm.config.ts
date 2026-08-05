@@ -1,6 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { join } from 'path';
+import { DataSource } from 'typeorm';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 
 export const ormConfig: TypeOrmModuleAsyncOptions = {
   inject: [ConfigService],
@@ -18,4 +20,8 @@ export const ormConfig: TypeOrmModuleAsyncOptions = {
     migrationsRun: false,
     synchronize: false,
   }),
+  async dataSourceFactory(options) {
+    if (!options) throw new Error('Invalid options passed');
+    return Promise.resolve(addTransactionalDataSource(new DataSource(options)));
+  },
 };
