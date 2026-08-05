@@ -9,7 +9,6 @@ export class SocketAuthService {
 
   async authenticate(client: Socket): Promise<string> {
     const cookies = client.request.headers.cookie;
-
     if (!cookies) {
       throw new WsException('Unauthorized');
     }

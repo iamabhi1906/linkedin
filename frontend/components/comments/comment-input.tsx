@@ -86,18 +86,12 @@ export const CommentInput: React.FC<CommentInputProps> = ({
 
         <Box className={styles.inputActionRow}>
           <Box className={styles.iconButtonsGroup}>
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              className={styles.hiddenFileInput}
-              onChange={handleFileChange}
-            />
+            <input type="file" accept="image/*" ref={fileInputRef} className={styles.hiddenFileInput} onChange={handleFileChange} />
             <IconButton size="small" className={styles.iconBtn} onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-              <ImageIcon fontSize="small" />
+              <ImageIcon />
             </IconButton>
             <IconButton size="small" className={styles.iconBtn} onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-              <GifIcon fontSize="small" />
+              <GifIcon />
             </IconButton>
           </Box>
 

@@ -1,45 +1,129 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableColumn,
+  TableForeignKey,
+  TableIndex,
+} from 'typeorm';
 
 export class CreateLikesAndUpdatePostComments1786700000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "post_comments" ADD COLUMN IF NOT EXISTS "mediaUrl" varchar`,
-    );
+    if (!(await queryRunner.hasColumn('post_comments', 'mediaUrl'))) {
+      await queryRunner.addColumn(
+        'post_comments',
+        new TableColumn({
+          name: 'mediaUrl',
+          type: 'varchar',
+          isNullable: true,
+        }),
+      );
+    }
 
-    await queryRunner.query(
-      `ALTER TABLE "post_comments" ADD COLUMN IF NOT EXISTS "likesCount" integer NOT NULL DEFAULT 0`,
-    );
+    if (!(await queryRunner.hasColumn('post_comments', 'likesCount'))) {
+      await queryRunner.addColumn(
+        'post_comments',
+        new TableColumn({
+          name: 'likesCount',
+          type: 'integer',
+          default: 0,
+        }),
+      );
+    }
 
-    await queryRunner.query(`
-      CREATE TABLE IF NOT EXISTS "likes" (
-        "id" uuid NOT NULL DEFAULT gen_random_uuid(),
-        "targetType" varchar(20) NOT NULL DEFAULT 'POST',
-        "postId" uuid,
-        "commentId" uuid,
-        "userId" uuid NOT NULL,
-        "reaction" varchar(50) NOT NULL DEFAULT 'like',
-        "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_likes_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_likes_post" FOREIGN KEY ("postId") REFERENCES "posts"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_likes_comment" FOREIGN KEY ("commentId") REFERENCES "post_comments"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_likes_user" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE
-      )
-    `);
-
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_likes_post_user_target" ON "likes" ("postId", "userId", "targetType")`,
-    );
-
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_likes_comment_user_target" ON "likes" ("commentId", "userId", "targetType")`,
-    );
+    if (!(await queryRunner.hasTable('likes'))) {
+      await queryRunner.createTable(
+        new Table({
+          name: 'likes',
+          columns: [
+            {
+              name: 'id',
+              type: 'uuid',
+              isPrimary: true,
+              generationStrategy: 'uuid',
+              default: 'gen_random_uuid()',
+            },
+            {
+              name: 'targetType',
+              type: 'varchar',
+              length: '20',
+              default: "'POST'",
+            },
+            {
+              name: 'postId',
+              type: 'uuid',
+              isNullable: true,
+            },
+            {
+              name: 'commentId',
+              type: 'uuid',
+              isNullable: true,
+            },
+            {
+              name: 'userId',
+              type: 'uuid',
+            },
+            {
+              name: 'reaction',
+              type: 'varchar',
+              length: '50',
+              default: "'like'",
+            },
+            {
+              name: 'createdAt',
+              type: 'timestamp',
+              default: 'now()',
+            },
+          ],
+          foreignKeys: [
+            new TableForeignKey({
+              name: 'FK_likes_post',
+              columnNames: ['postId'],
+              referencedTableName: 'posts',
+              referencedColumnNames: ['id'],
+              onDelete: 'CASCADE',
+            }),
+            new TableForeignKey({
+              name: 'FK_likes_comment',
+              columnNames: ['commentId'],
+              referencedTableName: 'post_comments',
+              referencedColumnNames: ['id'],
+              onDelete: 'CASCADE',
+            }),
+            new TableForeignKey({
+              name: 'FK_likes_user',
+              columnNames: ['userId'],
+              referencedTableName: 'users',
+              referencedColumnNames: ['id'],
+              onDelete: 'CASCADE',
+            }),
+          ],
+          indices: [
+            new TableIndex({
+              name: 'IDX_likes_post_user_target',
+              columnNames: ['postId', 'userId', 'targetType'],
+            }),
+            new TableIndex({
+              name: 'IDX_likes_comment_user_target',
+              columnNames: ['commentId', 'userId', 'targetType'],
+            }),
+          ],
+        }),
+      );
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_likes_comment_user_target"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_likes_post_user_target"`);
-    await queryRunner.query(`DROP TABLE IF EXISTS "likes"`);
-    await queryRunner.query(`ALTER TABLE "post_comments" DROP COLUMN IF EXISTS "likesCount"`);
-    await queryRunner.query(`ALTER TABLE "post_comments" DROP COLUMN IF EXISTS "mediaUrl"`);
+    if (await queryRunner.hasTable('likes')) {
+      await queryRunner.dropTable('likes');
+    }
+
+    if (await queryRunner.hasColumn('post_comments', 'likesCount')) {
+      await queryRunner.dropColumn('post_comments', 'likesCount');
+    }
+
+    if (await queryRunner.hasColumn('post_comments', 'mediaUrl')) {
+      await queryRunner.dropColumn('post_comments', 'mediaUrl');
+    }
   }
 }

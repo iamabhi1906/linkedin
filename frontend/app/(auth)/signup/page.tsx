@@ -43,8 +43,9 @@ export default function SignUpPage() {
           name: `${data.firstName} ${data.lastName}`,
         }),
       ).unwrap();
+      console.log("Hello");
       enqueueSnackbar('Account created successfully!', { variant: 'success' });
-      router.replace('/signup');
+      router.replace('/signin');
     } catch (err: unknown) {
       enqueueSnackbar((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Signup failed', { variant: 'error' });
     } finally {

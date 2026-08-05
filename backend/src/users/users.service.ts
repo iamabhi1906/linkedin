@@ -100,7 +100,8 @@ export class UsersService {
     }
 
     Object.assign(user, dto);
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+    return user;
   }
 
   async updateProfilePicture(
@@ -161,7 +162,12 @@ export class UsersService {
     page = 1,
     limit = 12,
     currentUserId?: string,
-  ): Promise<{ users: User[]; total: number; page: number; totalPages: number }> {
+  ): Promise<{
+    users: User[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
     const skip = (page - 1) * limit;
     const qb = this.userRepository.createQueryBuilder('user');
 

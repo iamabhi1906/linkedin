@@ -21,12 +21,9 @@ export class RepostPostService {
       where: { id: postId },
       relations: { author: true, media: true, organization: true },
     });
-
     if (!targetPost) {
       throw new NotFoundException(`Post with ID '${postId}' not found`);
     }
-
-    // Always reference the root original post if target post is already a repost
     const rootPostId = targetPost.originalPostId || targetPost.id;
     const rootPost =
       rootPostId === targetPost.id
@@ -39,7 +36,6 @@ export class RepostPostService {
 
     const hasThought = Boolean(dto?.content && dto.content.trim().length > 0);
 
-    // Check if user has an existing simple repost (no content) for this root post
     const existingRepost = await this.postRepository.findOne({
       where: {
         authorId: userId,
@@ -49,7 +45,6 @@ export class RepostPostService {
     });
 
     if (existingRepost && !hasThought) {
-      // Toggle off / Undo simple repost
       await this.postRepository.remove(existingRepost);
       rootPost.repostsCount = Math.max(0, rootPost.repostsCount - 1);
       await this.postRepository.save(rootPost);
@@ -60,7 +55,6 @@ export class RepostPostService {
       };
     }
 
-    // Create new repost (instant share or quote repost)
     const newRepost = this.postRepository.create({
       authorId: userId,
       originalPostId: rootPostId,
@@ -73,7 +67,6 @@ export class RepostPostService {
     rootPost.repostsCount = (rootPost.repostsCount || 0) + 1;
     await this.postRepository.save(rootPost);
 
-    // Reload with relations for response
     const fullRepost = await this.postRepository.findOne({
       where: { id: savedRepost.id },
       relations: {
@@ -87,7 +80,9 @@ export class RepostPostService {
     });
 
     return {
-      message: hasThought ? 'Reposted with thoughts successfully' : 'Reposted successfully',
+      message: hasThought
+        ? 'Reposted with thoughts successfully'
+        : 'Reposted successfully',
       post: fullRepost || savedRepost,
       isReposted: true,
     };

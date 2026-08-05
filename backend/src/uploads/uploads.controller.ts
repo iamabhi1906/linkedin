@@ -25,7 +25,7 @@ export class UploadsController {
     @Body('folder') folder?: UploadFolder,
   ) {
     const url = await this.uploadsService.uploadSingle(file, folder);
-    return { url };
+    return { url: `http://localhost:5050${url}` };
   }
 
   @Post('multiple')

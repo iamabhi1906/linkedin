@@ -32,7 +32,7 @@ const userSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(updateProfileThunk.fulfilled, (state, action) => {
-        state.profile = { ...state.profile, ...action.payload.data };
+        state.profile = action.payload;
       });
   },
 });

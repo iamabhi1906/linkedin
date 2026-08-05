@@ -14,10 +14,11 @@ export default function JobsSidebar() {
   const { profile } = useSelector((state: RootState) => state.user);
   const { user } = useSelector((state: RootState) => state.auth);
   const currentUser = profile || user;
+  console.log(profile);
 
   const userName = currentUser?.name || 'LinkedIn User';
   const userAvatar = currentUser?.profilePicture;
-  const userHeadline = currentUser?.headline || 'Member at LinkedIn Clone';
+  const userHeadline = currentUser?.headline;
 
   return (
     <Box className={styles.container}>

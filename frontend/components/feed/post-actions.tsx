@@ -2,14 +2,7 @@
 
 import React, { useState } from 'react';
 import { Box, Button, Menu, MenuItem, Typography } from '@mui/material';
-import {
-  ThumbUpOutlined as LikeIcon,
-  ThumbUp as LikedIcon,
-  CommentOutlined as CommentIcon,
-  Repeat as RepeatIcon,
-  SendOutlined as SendIcon,
-  Create as CreateIcon,
-} from '@mui/icons-material';
+import { CommentOutlined as CommentIcon, Repeat as RepeatIcon, SendOutlined as SendIcon, Create as CreateIcon } from '@mui/icons-material';
 import { ReactionPicker } from '../shared/reaction-picker';
 import { ReactionIcon } from '../shared/reaction-icon';
 import { useAppDispatch } from '@/app/store';
@@ -76,11 +69,7 @@ export const PostActions: React.FC<PostActionsProps> = ({
 
   return (
     <Box className={styles.actionButtonsRow}>
-      <Box
-        className={styles.reactionWrapper}
-        onMouseEnter={() => setShowReactionSelector(true)}
-        onMouseLeave={() => setShowReactionSelector(false)}
-      >
+      <Box className={styles.reactionWrapper} onMouseEnter={() => setShowReactionSelector(true)} onMouseLeave={() => setShowReactionSelector(false)}>
         {showReactionSelector && (
           <ReactionPicker
             onSelect={async (label) => {
@@ -90,28 +79,24 @@ export const PostActions: React.FC<PostActionsProps> = ({
             }}
           />
         )}
-        <Button
-          startIcon={<ReactionIcon reaction={selectedReaction} liked={liked} />}
-          onClick={() => handleToggleLike()}
-          className={liked ? styles.likedButton : styles.postButtons}
-        >
+        <Button onClick={() => handleToggleLike()} className={liked ? styles.likedButton : styles.postButtons}>
+          <ReactionIcon reaction={selectedReaction} liked={liked} width={16} height={16} />
           {liked && selectedReaction ? selectedReaction.charAt(0).toUpperCase() + selectedReaction.slice(1) : 'Like'}
         </Button>
       </Box>
 
-      <Button startIcon={<CommentIcon />} onClick={onToggleComments} className={styles.postButtons}>
+      <Button onClick={onToggleComments} className={styles.postButtons}>
+        <CommentIcon className={styles.icon} />
         Comment
       </Button>
 
-      <Button
-        startIcon={<RepeatIcon className={isReposted ? styles.repostedIcon : undefined} />}
-        onClick={(e) => setRepostMenuAnchor(e.currentTarget)}
-        className={isReposted ? styles.repostedButton : styles.postButtons}
-      >
+      <Button onClick={(e) => setRepostMenuAnchor(e.currentTarget)} className={isReposted ? styles.repostedButton : styles.postButtons}>
+        <RepeatIcon className={`${isReposted ? styles.repostedIcon : undefined} ${styles.icon}`} />
         Repost
       </Button>
 
-      <Button startIcon={<SendIcon />} className={styles.postButtons}>
+      <Button className={styles.postButtons}>
+        <SendIcon className={styles.icon} />
         Send
       </Button>
 

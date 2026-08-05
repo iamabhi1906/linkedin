@@ -82,15 +82,11 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, postA
             </Typography>
           </Box>
 
-          {comment.author?.headline && (
-            <Typography className={styles.headlineText}>{comment.author.headline}</Typography>
-          )}
+          {comment.author?.headline && <Typography className={styles.headlineText}>{comment.author.headline}</Typography>}
 
           {comment.content && <Typography className={styles.contentText}>{comment.content}</Typography>}
 
-          {comment.mediaUrl && (
-            <img src={comment.mediaUrl} alt="comment attachment" className={styles.commentMedia} />
-          )}
+          {comment.mediaUrl && <img src={comment.mediaUrl} alt="comment attachment" className={styles.commentMedia} />}
         </Box>
 
         <CommentActions

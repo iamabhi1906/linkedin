@@ -26,6 +26,7 @@ export default function LeftSidebar() {
   const { organizations } = useSelector((state: RootState) => state.organization);
 
   const currentUser = profile || user;
+  console.log(currentUser);
 
   useEffect(() => {
     dispatch(fetchOrganizationsThunk());
@@ -34,7 +35,15 @@ export default function LeftSidebar() {
   return (
     <Box className={styles.container}>
       <Card elevation={0} className={styles.profileCard}>
-        <Box className={styles.banner} />
+        <Box
+          className={styles.banner}
+          sx={{
+            backgroundImage: currentUser?.coverPicture && `url(${currentUser.coverPicture})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
         <Box className={styles.profileContent}>
           <Avatar src={currentUser?.profilePicture || undefined} onClick={() => router.push('/profile')} className={styles.avatar}>
             {currentUser?.name?.[0] || 'U'}
@@ -46,6 +55,7 @@ export default function LeftSidebar() {
           </Box>
 
           <Typography className={styles.userHeadline}>{currentUser?.headline}</Typography>
+          <Typography className={styles.location}>{currentUser?.location}</Typography>
         </Box>
       </Card>
 
@@ -110,18 +120,7 @@ export default function LeftSidebar() {
             </Box>
           </Box>
           <Divider sx={{ my: 0.5 }} />
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            onClick={() => router.push('/organization/new')}
-            sx={{
-              borderRadius: 5,
-              textTransform: 'none',
-              fontWeight: 600,
-              color: '#0A66C2',
-              borderColor: '#0A66C2',
-            }}
-          >
+          <Button variant="outlined" startIcon={<AddIcon />} onClick={() => router.push('/organization/new')} className={styles.orgCreate}>
             Create Organization
           </Button>
         </Card>

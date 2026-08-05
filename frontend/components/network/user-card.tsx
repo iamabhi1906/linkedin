@@ -52,16 +52,13 @@ export default function UserCard({ user, onStatusChange }: UserCardProps) {
 
     try {
       if (isFollowing) {
-        // Unfollow action
         await followService.unfollow(user.id);
         setIsFollowing(false);
         setHasPendingRequest(false);
         enqueueSnackbar(`Unfollowed ${user.name}`, { variant: 'info' });
       } else if (hasPendingRequest) {
-        // Cancel request or direct follow
         enqueueSnackbar('Follow request pending', { variant: 'info' });
       } else {
-        // Send follow request
         const res = await followService.sendFollowRequest(user.id);
         if (res.follow?.status === 'ACCEPTED') {
           setIsFollowing(true);

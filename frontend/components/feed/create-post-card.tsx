@@ -104,7 +104,7 @@ export default function CreatePostCard() {
               {currentUser?.name?.[0] || 'U'}
             </Avatar>
             <Button onClick={handleOpen} className={styles.startPostBtn}>
-              Start a post, try writing with AI
+              Start a post
             </Button>
           </Box>
 

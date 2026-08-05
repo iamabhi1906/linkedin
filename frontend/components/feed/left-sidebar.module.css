@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-width: 216px;
+  width: 100%;
 }
 
 .profileCard {
@@ -12,21 +14,21 @@
 }
 
 .banner {
-  height: 60px;
+  height: 56px;
   background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
 }
 
 .profileContent {
   padding: 0 16px 16px 16px;
-  margin-top: -32px;
-  text-align: center;
+  margin-top: px;
+  left: 0px;
 }
 
 .avatar {
-  width: 64px;
-  height: 64px;
-  border: 3px solid #ffffff;
-  margin: 0 auto 8px auto;
+  width: 76px !important;
+  height: 76px !important;
+  border: 2px solid #ffffff;
+  margin: -20px 0px;
   cursor: pointer;
   background-color: #0a66c2;
 }
@@ -36,6 +38,7 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
+  margin-top: 20px;
 }
 
 .userName {
@@ -56,10 +59,20 @@
 }
 
 .userHeadline {
-  font-size: 0.75rem;
-  color: #666666;
+  font-size: 12px !important;
+  color: rgba(0, 0, 0, 0.9);
   margin-top: 4px;
   line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.location {
+  font-size: 12px !important;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .orgBadge {
@@ -179,4 +192,13 @@
   font-size: 0.8rem;
   font-weight: 600;
   color: #1d2226;
+}
+
+.orgCreate {
+  border-radius: 100px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  color: #0a66c2 !important;
+  border-color: #0a66c2 !important;
+  font-size: 13px !important;
 }

@@ -75,14 +75,12 @@ export class UsersController {
     @Req() request: AuthenticatedRequest,
     @Body() dto: UpdateUserDto,
   ) {
-    const updatedUser = await this.usersService.updateProfile(
-      request.user.sub,
-      dto,
-    );
+    await this.usersService.updateProfile(request.user.sub, dto);
+    const user = await this.usersService.findById(request.user.sub);
     return {
       status: 'success',
       message: 'Profile updated successfully',
-      user: updatedUser,
+      user,
     };
   }
 

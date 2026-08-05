@@ -58,9 +58,9 @@ export class AuthService {
       isVerified: true,
     });
 
-    await this.emailVerificationService.sendVerificationOtp({
-      email: user.email,
-    });
+    // await this.emailVerificationService.sendVerificationOtp({
+    //   email: user.email,
+    // });
 
     delete user.password;
     return user;

@@ -1,21 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import {
-  Box,
-  Card,
-  CircularProgress,
-  Container,
-  InputBase,
-  Pagination,
-  Typography,
-} from '@mui/material';
-import {
-  People as PeopleIcon,
-  PersonAdd as PersonAddIcon,
-  Search as SearchIcon,
-  Campaign as FollowersIcon,
-} from '@mui/icons-material';
+import { Box, Card, CircularProgress, Container, InputBase, Pagination, Typography } from '@mui/material';
+import { People as PeopleIcon, PersonAdd as PersonAddIcon, Search as SearchIcon, Campaign as FollowersIcon } from '@mui/icons-material';
 import { userService } from '@/services/users/user.service';
 import { followService } from '@/services/follows/follow.service';
 import UserCard, { UserCardData } from '@/components/network/user-card';
@@ -30,12 +17,10 @@ export default function NetworkPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
 
-  // Network stats
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
 
-  // Modal State
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<'followers' | 'following'>('followers');
 
@@ -46,8 +31,8 @@ export default function NetworkPage() {
       setUsers(res.users || []);
       setTotalPages(res.totalPages || 1);
       setTotalUsers(res.total || 0);
-    } catch {
-      // Handled quietly
+    } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -63,16 +48,18 @@ export default function NetworkPage() {
       setFollowersCount(followersRes.meta?.total || 0);
       setFollowingCount(followingRes.meta?.total || 0);
       setPendingCount(pendingRes.meta?.total || 0);
-    } catch {
-      // Handled quietly
+    } catch (error) {
+      console.log(error);
     }
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUsers();
   }, [fetchUsers]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchStats();
   }, [fetchStats]);
 
@@ -89,17 +76,14 @@ export default function NetworkPage() {
   return (
     <Container maxWidth="lg" className={styles.container}>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
-        {/* Sidebar */}
+        {/* sidebar */}
         <Box sx={{ width: { xs: '100%', md: '280px' }, flexShrink: 0 }}>
           <Card elevation={0} className={styles.sidebarCard}>
             <Typography variant="subtitle2" className={styles.sidebarHeader}>
               Manage my network
             </Typography>
 
-            <Box
-              className={styles.sidebarItem}
-              onClick={() => openListModal('following')}
-            >
+            <Box className={styles.sidebarItem} onClick={() => openListModal('following')}>
               <Box className={styles.sidebarItemText}>
                 <PeopleIcon fontSize="small" />
                 <Typography variant="body2">Following</Typography>
@@ -109,10 +93,7 @@ export default function NetworkPage() {
               </Typography>
             </Box>
 
-            <Box
-              className={styles.sidebarItem}
-              onClick={() => openListModal('followers')}
-            >
+            <Box className={styles.sidebarItem} onClick={() => openListModal('followers')}>
               <Box className={styles.sidebarItemText}>
                 <FollowersIcon fontSize="small" />
                 <Typography variant="body2">Followers</Typography>
@@ -123,10 +104,7 @@ export default function NetworkPage() {
             </Box>
 
             {pendingCount > 0 && (
-              <Box
-                className={styles.sidebarItem}
-                onClick={() => openListModal('followers')}
-              >
+              <Box className={styles.sidebarItem} onClick={() => openListModal('followers')}>
                 <Box className={styles.sidebarItemText}>
                   <PersonAddIcon fontSize="small" />
                   <Typography variant="body2">Pending Requests</Typography>
@@ -139,25 +117,16 @@ export default function NetworkPage() {
           </Card>
         </Box>
 
-        {/* Main Section */}
         <Box sx={{ flex: 1 }}>
           <Card elevation={0} className={styles.mainCard}>
-            {/* Search Box */}
             <Box className={styles.searchBox}>
               <SearchIcon sx={{ color: '#666666', mr: 1 }} />
-              <InputBase
-                fullWidth
-                placeholder="Search people by name, headline, location..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
+              <InputBase fullWidth placeholder="Search people by name, headline, location..." value={searchQuery} onChange={handleSearchChange} />
             </Box>
 
             <Box className={styles.sectionHeader}>
               <Typography variant="h6" className={styles.sectionTitle}>
-                {searchQuery
-                  ? `Search Results (${totalUsers})`
-                  : `People you may know (${totalUsers})`}
+                {searchQuery ? `Search Results (${totalUsers})` : `People you may know (${totalUsers})`}
               </Typography>
             </Box>
 
@@ -167,9 +136,7 @@ export default function NetworkPage() {
               </Box>
             ) : users.length === 0 ? (
               <Box sx={{ textAlign: 'center', py: 8 }}>
-                <Typography color="text.secondary">
-                  No users found matching your search criteria.
-                </Typography>
+                <Typography color="text.secondary">No users found matching your search criteria.</Typography>
               </Box>
             ) : (
               <Box
@@ -189,23 +156,15 @@ export default function NetworkPage() {
               </Box>
             )}
 
-            {/* Pagination Controls */}
             {totalPages > 1 && (
               <Box className={styles.paginationBox}>
-                <Pagination
-                  count={totalPages}
-                  page={page}
-                  onChange={(_, value) => setPage(value)}
-                  color="primary"
-                  size="medium"
-                />
+                <Pagination count={totalPages} page={page} onChange={(_, value) => setPage(value)} color="primary" size="medium" />
               </Box>
             )}
           </Card>
         </Box>
       </Box>
 
-      {/* Followers & Following List Modal */}
       <UserListModal
         open={modalOpen}
         onClose={() => {

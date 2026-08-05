@@ -1,8 +1,7 @@
-
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { ThumbUp as ThumbIcon } from '@mui/icons-material';
 import { ReactionPicker } from '../shared/reaction-picker';
 import { ReactionIcon } from '../shared/reaction-icon';
@@ -16,26 +15,14 @@ interface CommentActionsProps {
   onToggleReply: () => void;
 }
 
-export const CommentActions: React.FC<CommentActionsProps> = ({
-  liked,
-  likesCount,
-  selectedReaction = 'like',
-  onToggleLike,
-  onToggleReply,
-}) => {
+export const CommentActions: React.FC<CommentActionsProps> = ({ liked, likesCount, selectedReaction = 'like', onToggleLike, onToggleReply }) => {
   const [showSelector, setShowSelector] = useState(false);
 
-  const displayReactionLabel = liked
-    ? selectedReaction.charAt(0).toUpperCase() + selectedReaction.slice(1)
-    : 'Like';
+  const displayReactionLabel = liked ? selectedReaction.charAt(0).toUpperCase() + selectedReaction.slice(1) : 'Like';
 
   return (
     <Box className={styles.actionsContainer}>
-      <Box
-        className={styles.reactionWrapper}
-        onMouseEnter={() => setShowSelector(true)}
-        onMouseLeave={() => setShowSelector(false)}
-      >
+      <Box className={styles.reactionWrapper} onMouseEnter={() => setShowSelector(true)} onMouseLeave={() => setShowSelector(false)}>
         {showSelector && (
           <ReactionPicker
             onSelect={(reaction) => {
@@ -44,11 +31,7 @@ export const CommentActions: React.FC<CommentActionsProps> = ({
             }}
           />
         )}
-        <button
-          type="button"
-          className={liked ? styles.likedBtn : styles.actionBtn}
-          onClick={() => onToggleLike()}
-        >
+        <button type="button" className={liked ? styles.likedBtn : styles.actionBtn} onClick={() => onToggleLike()}>
           <Box className={styles.buttonContent}>
             <ReactionIcon reaction={selectedReaction} liked={liked} />
             <span>{displayReactionLabel}</span>

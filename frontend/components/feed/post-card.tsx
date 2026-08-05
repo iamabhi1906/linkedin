@@ -30,13 +30,14 @@ export default function PostCard({ post }: { post: Post }) {
   const reposterName = post.author?.name || 'A connection';
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLiked(post.isLiked || false);
     setLikesCount(post.likesCount || 0);
-    const activeReaction = post.likeReaction || post.userReaction || post.userLike?.reaction || 'like';
+    const activeReaction = post.likeReaction || 'like';
     setSelectedReaction(activeReaction);
     setIsReposted(post.isReposted || false);
     setRepostsCount(post.repostsCount || 0);
-  }, [post.isLiked, post.likesCount, post.likeReaction, post.userReaction, post.userLike, post.isReposted, post.repostsCount]);
+  }, [post.isLiked, post.likesCount, post.likeReaction, post.isReposted, post.repostsCount]);
 
   return (
     <Card elevation={0} className={styles.postCard}>
@@ -126,13 +127,7 @@ export default function PostCard({ post }: { post: Post }) {
           }}
         />
 
-        {showComments && (
-          <CommentSection
-            postId={post.id}
-            postAuthorId={post.authorId}
-            onCommentAdded={() => setCommentsCount((prev) => prev + 1)}
-          />
-        )}
+        {showComments && <CommentSection postId={post.id} postAuthorId={post.authorId} onCommentAdded={() => setCommentsCount((prev) => prev + 1)} />}
       </CardContent>
     </Card>
   );

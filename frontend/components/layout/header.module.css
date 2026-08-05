@@ -1,0 +1,51 @@
+.appBar {
+  z-index: 1100;
+  height: 52px !important;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.headerSearchBox {
+  display: flex;
+  align-items: center;
+  border-radius: 100px;
+  padding: 12px 16px 12px 12px;
+  width: 280px;
+  height: 34px;
+  border: 1px solid #000;
+}
+
+.icons {
+  text-decoration: none !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #666666;
+  height: 100%;
+  width: 82px;
+  align-items: center;
+}
+
+.iconGroup {
+  display: flex;
+}
+
+.profileImage {
+  width: 82px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.toolbar {
+  padding: 0px !important;
+  height: 52px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logoAndSearchBar {
+  display: flex;
+  gap: 10;
+}

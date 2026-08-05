@@ -19,12 +19,11 @@
 }
 
 .commentBubble {
-  background-color: #f2f4f7;
   border-radius: 0 12px 12px 12px;
   padding: 8px 12px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .headerRow {
@@ -42,7 +41,7 @@
 
 .authorName {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 13px !important;
   color: #000000;
 }
 
@@ -56,12 +55,12 @@
 }
 
 .timeText {
-  font-size: 11px;
-  color: #666666;
+  font-size: 11px !important;
+  color: #666666 !important;
 }
 
 .headlineText {
-  font-size: 11px;
+  font-size: 11px !important;
   color: #666666;
   white-space: nowrap;
   overflow: hidden;

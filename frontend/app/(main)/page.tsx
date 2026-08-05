@@ -20,8 +20,8 @@ export default function FeedPage() {
   }, [dispatch]);
 
   return (
-    <Grid container spacing={2.5}>
-      <Grid size={{ xs: 12, md: 3 }}>
+    <Grid container spacing={2}>
+      <Grid size={{ xs: 12, md: 2.5 }}>
         <LeftSidebar />
       </Grid>
 

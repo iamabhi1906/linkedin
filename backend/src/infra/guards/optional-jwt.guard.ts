@@ -13,8 +13,8 @@ export class OptionalJwtAuthGuard implements CanActivate {
       try {
         const payload = await this.tokenService.verifyAccessToken(token);
         request['user'] = payload;
-      } catch {
-        // Token invalid or expired, continue as unauthenticated guest
+      } catch (error) {
+        console.log(error);
       }
     }
     return true;

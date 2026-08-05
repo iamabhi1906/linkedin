@@ -7,7 +7,6 @@ import {
 
 export class CreateConversationsAndMessagesTables1786600000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Conversations
     await queryRunner.createTable(
       new Table({
         name: 'conversations',

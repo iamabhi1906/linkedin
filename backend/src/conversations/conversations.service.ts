@@ -215,12 +215,10 @@ export class ConversationsService {
 
     const savedMessage = await this.messageRepository.save(newMessage);
 
-    // Update conversation updatedAt
     await this.conversationRepository.update(conversationId, {
       updatedAt: new Date(),
     });
 
-    // Update participant lastReadAt
     await this.participantRepository.update(
       { conversationId, userId: senderId },
       { lastReadAt: new Date() },

@@ -13,16 +13,13 @@ import EditProfileModal from '@/components/profile/edit-profile-modal';
 export default function ProfilePage() {
   const dispatch = useDispatch<AppDispatch>();
   const { profile, loading } = useSelector((state: RootState) => state.user);
-  const { user } = useSelector((state: RootState) => state.auth);
   const [openEditModal, setOpenEditModal] = useState(false);
-
-  const currentUser = profile || user;
 
   useEffect(() => {
     dispatch(fetchMeThunk());
   }, [dispatch]);
 
-  if (loading && !currentUser) {
+  if (loading && !profile) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
         <CircularProgress color="primary" />
@@ -35,9 +32,8 @@ export default function ProfilePage() {
       <Container maxWidth="lg" sx={{ py: 3 }}>
         <Grid container spacing={2.5}>
           <Grid size={{ xs: 12, md: 8 }}>
-            <ProfileHeaderCard profile={currentUser} />
-            <ProfileAboutCard about={currentUser?.about} onEdit={() => setOpenEditModal(true)} />
-            
+            <ProfileHeaderCard profile={profile} />
+            <ProfileAboutCard about={profile?.about} onEdit={() => setOpenEditModal(true)} />
           </Grid>
 
           <Grid size={{ xs: 12, md: 4 }}>
@@ -46,11 +42,7 @@ export default function ProfilePage() {
         </Grid>
       </Container>
 
-      <EditProfileModal
-        open={openEditModal}
-        onClose={() => setOpenEditModal(false)}
-        currentUser={currentUser}
-      />
+      <EditProfileModal open={openEditModal} onClose={() => setOpenEditModal(false)} currentUser={profile} />
     </>
   );
 }

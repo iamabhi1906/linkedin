@@ -49,8 +49,6 @@ const postSlice = createSlice({
       })
       .addCase(repostThunk.fulfilled, (state, action) => {
         const { postId, post: newPost, isReposted } = action.payload;
-
-        // Find targeted post in current feed state
         const targetPost = state.posts.find((p) => p.id === postId || p.originalPostId === postId);
         if (targetPost) {
           targetPost.isReposted = isReposted;

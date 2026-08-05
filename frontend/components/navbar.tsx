@@ -30,7 +30,7 @@ export default function Navbar() {
   return (
     <Container>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <LinkedInLogo height={75} width={250} />
+        <LinkedInLogo height={400} width={500} />
 
         {user ? (
           <>

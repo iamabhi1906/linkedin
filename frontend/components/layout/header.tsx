@@ -17,7 +17,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/app/store';
 import { logoutThunk } from '@/features/auth/auth.action';
 import { signOut, useSession } from 'next-auth/react';
-import LinkedInLogo from '../linkedin-logo';
+import styles from './header.module.css';
+import LinkedInSimpleLogo from '../ui/linkedin-simple-logo';
 
 export default function Header() {
   const pathname = usePathname();
@@ -54,63 +55,35 @@ export default function Header() {
   ];
 
   return (
-    <AppBar
-      position="sticky"
-      color="inherit"
-      elevation={0}
-      sx={{
-        borderBottom: '1px solid #E0E0E0',
-        backgroundColor: '#FFFFFF',
-        zIndex: 1100,
-      }}
-    >
+    <AppBar position="sticky" color="inherit" elevation={0} className={styles.appBar}>
       <Container maxWidth="lg">
-        <Toolbar disableGutters sx={{ minHeight: 52, justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box className={styles.toolbar}>
+          <Box className={styles.logoAndSearchBar}>
             <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
-              <LinkedInLogo width={34} height={34} />
+              <LinkedInSimpleLogo width={34} height={34} />
             </Link>
 
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                backgroundColor: '#EDF3F8',
-                borderRadius: 1,
-                px: 1.5,
-                py: 0.5,
-                width: { xs: 160, sm: 260 },
-              }}
-            >
+            <Box className={styles.headerSearchBox}>
               <SearchIcon sx={{ color: '#666666', mr: 1, fontSize: 20 }} />
               <InputBase placeholder="Search" sx={{ fontSize: '0.875rem', width: '100%' }} />
             </Box>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 3 } }}>
+          <Box className={styles.iconGroup}>
             {navItems.map((item) => {
               const active = pathname === item.path;
               return (
                 <Link
                   key={item.label}
                   href={item.path}
-                  style={{
-                    textDecoration: 'none',
-                    color: active ? '#000000' : '#666666',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    borderBottom: active ? '2px solid #000000' : '2px solid transparent',
-                    paddingBottom: 2,
-                    paddingTop: 4,
-                  }}
+                  className={styles.icons}
+                  style={{ color: active ? '#000000' : '#666666', borderBottom: active ? '2px solid #000000' : '2px solid transparent' }}
                 >
-                  {React.cloneElement(item.icon, {
-                    sx: { fontSize: 24, color: active ? '#1D2226' : '#666666' },
-                  })}
+                  {item.icon}
                   <Typography
                     variant="caption"
                     sx={{
+                      textDecoration: 'none',
                       fontSize: '0.75rem',
                       display: { xs: 'none', md: 'block' },
                       fontWeight: active ? 600 : 400,
@@ -122,16 +95,7 @@ export default function Header() {
               );
             })}
 
-            <Box
-              onClick={handleOpenMenu}
-              sx={{
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                paddingTop: 0.5,
-              }}
-            >
+            <Box onClick={handleOpenMenu} className={styles.profileImage}>
               <Avatar src={currentUser?.profilePicture || (session?.user?.image ?? undefined)} sx={{ width: 24, height: 24, fontSize: '0.75rem' }}>
                 {currentUser?.name?.[0] || 'U'}
               </Avatar>
@@ -185,7 +149,7 @@ export default function Header() {
               </Typography>
             </Box>
           </Box>
-        </Toolbar>
+        </Box>
       </Container>
     </AppBar>
   );
