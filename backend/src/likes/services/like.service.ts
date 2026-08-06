@@ -1,12 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from '../../posts/entities/post.entity';
 import { PostComment } from '../../post-comments/entities/post-comment.entity';
 import { Like, LikeTargetType } from '../entities/like.entity';
-import { PostService } from 'src/posts/services/post.service';
 import { Transactional } from 'typeorm-transactional';
-import { PostCommentService } from 'src/post-comments/services/post-comment.service';
 
 @Injectable()
 export class LikeService {
@@ -17,12 +15,13 @@ export class LikeService {
     private readonly commentRepository: Repository<PostComment>,
     @InjectRepository(Like)
     private readonly likeRepository: Repository<Like>,
-    private readonly postService: PostService,
-    private readonly postCommentService: PostCommentService,
   ) {}
 
   async togglePostLike(postId: string, userId: string, reaction = 'like') {
-    const post = await this.postService.findById(postId);
+    const post = await this.postRepository.findOne({ where: { id: postId } });
+    if (!post) {
+      throw new NotFoundException(`Post with ID '${postId}' not found`);
+    }
     const existingLike = await this.findExistingLike(post, userId);
     if (!existingLike) {
       return this.likePost(post, userId, reaction);
@@ -38,7 +37,12 @@ export class LikeService {
     userId: string,
     reaction = 'like',
   ): Promise<{ liked: boolean; likesCount: number; reaction?: string }> {
-    const comment = await this.postCommentService.getCommentById(commentId);
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
+    });
+    if (!comment) {
+      throw new NotFoundException(`Comment with ID '${commentId}' not found`);
+    }
     const existingLike = await this.findExistingLike(comment, userId);
 
     if (existingLike) {

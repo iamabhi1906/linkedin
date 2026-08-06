@@ -8,10 +8,7 @@ import { LikeController } from './controllers/like.controller';
 import { TokenModule } from '../token/token.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Like, Post, PostComment]),
-    TokenModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Like, Post, PostComment]), TokenModule],
   controllers: [LikeController],
   providers: [LikeService],
   exports: [LikeService],

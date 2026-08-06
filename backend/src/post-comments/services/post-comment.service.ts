@@ -84,30 +84,46 @@ export class PostCommentService {
     }
   }
 
-  async getComments(postId: string, userId?: string): Promise<any[]> {
+  async getComments(postId: string, userId?: string): Promise<Comment[]> {
     const comments = await this.commentRepository.find({
-      where: { postId, parentId: IsNull() },
+      where: { postId },
       relations: {
         author: true,
         likes: true,
-        children: { author: true, likes: true },
       },
-      order: { createdAt: 'ASC' },
+      order: {
+        createdAt: 'ASC',
+      },
     });
 
-    const formatComment = (c: PostComment) => {
+    const map = new Map<string, any>();
+
+    comments.forEach((comment) => {
       const userLike =
-        userId && c.likes ? c.likes.find((l) => l.userId === userId) : null;
-      return {
-        ...c,
+        userId && comment.likes
+          ? comment.likes.find((l) => l.userId === userId)
+          : null;
+
+      map.set(comment.id, {
+        ...comment,
         liked: !!userLike,
         selectedReaction: userLike?.reaction || 'like',
         userLike: userLike || null,
-        children: c.children ? c.children.map(formatComment) : [],
-      };
-    };
+        children: [],
+      });
+    });
 
-    return comments.map(formatComment);
+    const roots: Comment[] = [];
+
+    comments.forEach((comment) => {
+      const node: Comment = map.get(comment.id);
+      if (comment.parentId) {
+        map.get(comment.parentId)?.children.push(node);
+      } else {
+        roots.push(node);
+      }
+    });
+    return roots;
   }
 
   async getCommentById(commentId: string): Promise<PostComment> {

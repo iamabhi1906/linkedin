@@ -278,3 +278,55 @@
 .showDetailsLink:hover {
   text-decoration: underline;
 }
+
+.followBtn {
+  background-color: #0a66c2 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 20px !important;
+  padding: 6px 18px !important;
+  font-size: 0.9rem !important;
+}
+
+.followBtn:hover {
+  background-color: #004182 !important;
+}
+
+.followingBtn {
+  border: 1px solid #0a66c2 !important;
+  color: #0a66c2 !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 20px !important;
+  padding: 6px 18px !important;
+  font-size: 0.9rem !important;
+}
+
+.followingBtn:hover {
+  background-color: #ebf4fd !important;
+}
+
+.pendingBtn {
+  border: 1px solid #666666 !important;
+  color: #666666 !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 20px !important;
+  padding: 6px 18px !important;
+  font-size: 0.9rem !important;
+}
+
+.messageBtn {
+  border: 1px solid #0a66c2 !important;
+  color: #0a66c2 !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 20px !important;
+  padding: 6px 18px !important;
+  font-size: 0.9rem !important;
+}
+
+.messageBtn:hover {
+  background-color: #f3f8fe !important;
+}

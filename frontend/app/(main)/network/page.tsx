@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
 import { Box, Card, CircularProgress, Container, InputBase, Pagination, Typography } from '@mui/material';
 import { People as PeopleIcon, PersonAdd as PersonAddIcon, Search as SearchIcon, Campaign as FollowersIcon } from '@mui/icons-material';
 import { userService } from '@/services/users/user.service';
@@ -83,7 +84,7 @@ export default function NetworkPage() {
               Manage my network
             </Typography>
 
-            <Box className={styles.sidebarItem} onClick={() => openListModal('following')}>
+            <Box className={styles.sidebarItem} component={Link} href="/network/following" style={{ textDecoration: 'none', color: 'inherit' }}>
               <Box className={styles.sidebarItemText}>
                 <PeopleIcon fontSize="small" />
                 <Typography variant="body2">Following</Typography>
@@ -93,7 +94,7 @@ export default function NetworkPage() {
               </Typography>
             </Box>
 
-            <Box className={styles.sidebarItem} onClick={() => openListModal('followers')}>
+            <Box className={styles.sidebarItem} component={Link} href="/network/followers" style={{ textDecoration: 'none', color: 'inherit' }}>
               <Box className={styles.sidebarItemText}>
                 <FollowersIcon fontSize="small" />
                 <Typography variant="body2">Followers</Typography>

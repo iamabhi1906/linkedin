@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Avatar, Box, Button, IconButton, Typography } from '@mui/material';
 import {
   Add as AddIcon,
@@ -80,11 +81,29 @@ export const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
   return (
     <Box className={styles.headerRow}>
       <Box className={styles.authorBox}>
-        <Avatar src={authorAvatar}>{authorName[0]}</Avatar>
+        {targetPost.author?.username || targetPost.author?.id ? (
+          <Link href={targetPost.author.username ? `/in/${targetPost.author.username}` : `/profile/${targetPost.author.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Avatar src={authorAvatar}>{authorName[0]}</Avatar>
+          </Link>
+        ) : (
+          <Avatar src={authorAvatar}>{authorName[0]}</Avatar>
+        )}
         <Box className={styles.authorInfo}>
-          <Typography variant="subtitle2" className={styles.authorName}>
-            {authorName}
-          </Typography>
+          {targetPost.author?.username || targetPost.author?.id ? (
+            <Typography
+              variant="subtitle2"
+              className={styles.authorName}
+              component={Link}
+              href={targetPost.author.username ? `/in/${targetPost.author.username}` : `/profile/${targetPost.author.id}`}
+              sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline', color: '#0a66c2' } }}
+            >
+              {authorName}
+            </Typography>
+          ) : (
+            <Typography variant="subtitle2" className={styles.authorName}>
+              {authorName}
+            </Typography>
+          )}
           <Typography variant="caption" className={styles.authorHeadline}>
             {targetPost.author?.headline || 'LinkedIn Member'}
           </Typography>

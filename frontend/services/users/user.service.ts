@@ -16,7 +16,17 @@ export const userService = {
   },
 
   async getByUsername(username: string) {
-    const response = await apiClient.get(`/users/username/${username}`);
+    try {
+      const response = await apiClient.get(`/users/profile/${username}`);
+      return response.data;
+    } catch {
+      const response = await apiClient.get(`/users/${username}`);
+      return response.data;
+    }
+  },
+
+  async getById(id: string) {
+    const response = await apiClient.get(`/users/${id}`);
     return response.data;
   },
 

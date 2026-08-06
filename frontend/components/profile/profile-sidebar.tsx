@@ -6,21 +6,34 @@ import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import styles from './profile-sidebar.module.css';
 
-export default function ProfileSidebar() {
+import { User } from '@/features/user/user.type';
+
+interface ProfileSidebarProps {
+  profile?: User | null;
+  isOwnProfile?: boolean;
+}
+
+export default function ProfileSidebar({ profile, isOwnProfile = true }: ProfileSidebarProps) {
   const viewers = [
     { name: 'Software Development Lead', role: 'Tech Founder at Zenmonk', initial: 'S' },
     { name: 'Alumni Network Member', role: 'Lovely Professional University', initial: 'A' },
     { name: 'Executive Team Member', role: 'Executive at Zenvest', initial: 'E' },
   ];
 
+  const profileUrl = profile?.username
+    ? `www.linkedin.com/in/${profile.username}`
+    : 'www.linkedin.com/in/user';
+
   return (
     <Box className={styles.container}>
       <Card elevation={0} className={styles.card}>
         <Box className={styles.cardHeader}>
           <Typography className={styles.cardTitle}>Profile language</Typography>
-          <IconButton className={styles.editBtn}>
-            <EditIcon fontSize="small" />
-          </IconButton>
+          {isOwnProfile && (
+            <IconButton className={styles.editBtn}>
+              <EditIcon fontSize="small" />
+            </IconButton>
+          )}
         </Box>
         <Typography className={styles.subText}>English</Typography>
       </Card>
@@ -28,18 +41,22 @@ export default function ProfileSidebar() {
       <Card elevation={0} className={styles.card}>
         <Box className={styles.cardHeader}>
           <Typography className={styles.cardTitle}>Public profile & URL</Typography>
-          <IconButton className={styles.editBtn}>
-            <EditIcon fontSize="small" />
-          </IconButton>
+          {isOwnProfile && (
+            <IconButton className={styles.editBtn}>
+              <EditIcon fontSize="small" />
+            </IconButton>
+          )}
         </Box>
-        <Typography className={styles.subText}>www.linkedin.com/in/iamabhi0619</Typography>
+        <Typography className={styles.subText}>{profileUrl}</Typography>
       </Card>
 
       <Card elevation={0} className={styles.card}>
-        <Typography className={styles.cardTitle}>Who your viewers also viewed</Typography>
-        <Typography className={styles.privateSubtitle}>
-          <LockIcon sx={{ fontSize: 14 }} /> Private to you
-        </Typography>
+        <Typography className={styles.cardTitle}>People also viewed</Typography>
+        {isOwnProfile && (
+          <Typography className={styles.privateSubtitle}>
+            <LockIcon sx={{ fontSize: 14 }} /> Private to you
+          </Typography>
+        )}
 
         <Box className={styles.viewerList}>
           {viewers.map((v, idx) => (

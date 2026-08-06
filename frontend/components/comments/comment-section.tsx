@@ -5,14 +5,8 @@ import { Box, Typography } from '@mui/material';
 import { useAppDispatch } from '@/app/store';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
-import {
-  fetchCommentsThunk,
-  addCommentThunk,
-} from '@/features/comment/comment.action';
-import {
-  selectCommentsForPost,
-  selectCommentsLoading,
-} from '@/features/comment/comment.slice';
+import { fetchCommentsThunk, addCommentThunk } from '@/features/comment/comment.action';
+import { selectCommentsForPost, selectCommentsLoading } from '@/features/comment/comment.slice';
 import { CommentInput } from './comment-input';
 import { CommentItem } from './comment-item';
 import { CommentSkeleton } from './comment-skeleton';
@@ -25,11 +19,7 @@ interface CommentSectionProps {
   onCommentAdded?: () => void;
 }
 
-export const CommentSection: React.FC<CommentSectionProps> = ({
-  postId,
-  postAuthorId,
-  onCommentAdded,
-}) => {
+export const CommentSection: React.FC<CommentSectionProps> = ({ postId, postAuthorId, onCommentAdded }) => {
   const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -71,18 +61,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       ) : (
         <Box className={styles.commentsList}>
           {comments.length > 0 ? (
-            comments.map((comment) => (
-              <CommentItem
-                key={comment.id}
-                comment={comment}
-                postId={postId}
-                postAuthorId={postAuthorId}
-              />
-            ))
+            comments.map((comment) => <CommentItem key={comment.id} comment={comment} postId={postId} postAuthorId={postAuthorId} />)
           ) : (
-            <Typography className={styles.emptyStateText}>
-              No comments yet. Be the first to comment!
-            </Typography>
+            <Typography className={styles.emptyStateText}>No comments yet. Be the first to comment!</Typography>
           )}
         </Box>
       )}

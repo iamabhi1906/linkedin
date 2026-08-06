@@ -12,6 +12,7 @@ export interface User {
   location: string | null;
   website: string | null;
   isVerified: boolean;
+  isPrivate?: boolean;
   status: string;
   lastLoginAt: string;
   createdAt: string;

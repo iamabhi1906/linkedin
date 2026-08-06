@@ -38,6 +38,7 @@ import { PostService } from './services/post.service';
     DeletePostService,
     FeedService,
     RepostPostService,
+    PostService,
   ],
   exports: [
     CreatePostService,

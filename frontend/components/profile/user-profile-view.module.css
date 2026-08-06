@@ -1,0 +1,42 @@
+.loadingBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  padding: 64px 0;
+}
+
+.notFoundCard {
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  padding: 48px 24px;
+  text-align: center;
+  margin-top: 32px;
+}
+
+.notFoundTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1d2226;
+  margin-bottom: 8px;
+}
+
+.notFoundSubtext {
+  font-size: 0.95rem;
+  color: #666666;
+  margin-bottom: 24px;
+}
+
+.backHomeBtn {
+  background-color: #0a66c2 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 20px !important;
+  padding: 6px 20px !important;
+}
+
+.backHomeBtn:hover {
+  background-color: #004182 !important;
+}

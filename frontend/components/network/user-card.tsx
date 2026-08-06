@@ -3,11 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Avatar, Box, Button, Card, Typography } from '@mui/material';
-import {
-  Add as AddIcon,
-  Check as CheckIcon,
-  HourglassEmpty as HourglassIcon,
-} from '@mui/icons-material';
+import { Add as AddIcon, Check as CheckIcon, HourglassEmpty as HourglassIcon } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { followService } from '@/services/follows/follow.service';
 import styles from './user-card.module.css';
@@ -71,11 +67,7 @@ export default function UserCard({ user, onStatusChange }: UserCardProps) {
       }
       onStatusChange?.();
     } catch (err: unknown) {
-      enqueueSnackbar(
-        (err as { response?: { data?: { message?: string } } }).response?.data?.message ||
-          'Action failed',
-        { variant: 'error' },
-      );
+      enqueueSnackbar((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Action failed', { variant: 'error' });
     } finally {
       setLoading(false);
     }
@@ -86,16 +78,13 @@ export default function UserCard({ user, onStatusChange }: UserCardProps) {
 
   return (
     <Card elevation={0} className={styles.userCard}>
-      <Box
-        className={styles.coverBanner}
-        style={coverSrc ? { backgroundImage: `url(${coverSrc})` } : undefined}
-      />
+      <Box className={styles.coverBanner} style={coverSrc ? { backgroundImage: `url(${coverSrc})` } : undefined} />
       <Box className={styles.cardContent}>
         <Avatar src={avatarSrc} className={styles.avatar}>
           {user.name?.[0] || 'U'}
         </Avatar>
 
-        <Link href={`/profile`} className={styles.userName}>
+        <Link href={user.username ? `/profile/${user.username}` : `/profile/${user.id}`} className={styles.userName}>
           {user.name}
         </Link>
 
@@ -115,15 +104,7 @@ export default function UserCard({ user, onStatusChange }: UserCardProps) {
           size="small"
           disabled={loading || hasPendingRequest}
           onClick={handleFollowAction}
-          startIcon={
-            isFollowing ? (
-              <CheckIcon />
-            ) : hasPendingRequest ? (
-              <HourglassIcon />
-            ) : (
-              <AddIcon />
-            )
-          }
+          startIcon={isFollowing ? <CheckIcon /> : hasPendingRequest ? <HourglassIcon /> : <AddIcon />}
           className={styles.actionButton}
         >
           {isFollowing ? 'Following' : hasPendingRequest ? 'Pending' : 'Follow'}

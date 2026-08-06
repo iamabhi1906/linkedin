@@ -69,8 +69,8 @@ export class FollowService {
     });
     if (!follow || follow.status !== FollowStatus.ACCEPTED)
       throw new NotFoundException('You are not following this user');
-
-    await this.followRepository.remove(follow);
+    follow.status = FollowStatus.UNFOLLOW;
+    await this.followRepository.save(follow);
   }
 
   async removeFollower(followingId: string, followerId: string): Promise<void> {
@@ -86,6 +86,8 @@ export class FollowService {
       throw new NotFoundException('User is not following you');
     }
 
-    await this.followRepository.remove(follow);
+    follow.status = FollowStatus.UNFOLLOW;
+    console.log(follow);
+    await this.followRepository.save(follow);
   }
 }

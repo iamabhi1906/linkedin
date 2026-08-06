@@ -86,6 +86,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, postA
 
           {comment.content && <Typography className={styles.contentText}>{comment.content}</Typography>}
 
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           {comment.mediaUrl && <img src={comment.mediaUrl} alt="comment attachment" className={styles.commentMedia} />}
         </Box>
 
